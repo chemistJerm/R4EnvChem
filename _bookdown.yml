@@ -24,9 +24,10 @@ rmd_files:  [
   "prog-with-r.Rmd",
   "modelling.Rmd",
   "visualizations.Rmd",
-  "communication.Rmd"
+  "communication.Rmd",
   
-  
+  "using-statistics.Rmd",
+  "choosing-visualizations.Rmd"
   
   ]
   
