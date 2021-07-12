@@ -8,6 +8,7 @@
 
 ## Box and Whisker Plots
 
+
 This type of plot requires at least 5 (and ideally many more) data points in each grouping or category. The most common use case you'll encounter is where you want to show the consistency of your instrumental method for specific compounds across multiple samples (or quickly identify statistical outliers). As an example, I'll use some house dust mass spectrometry data where I was looking for chlorinated azo dyes. 
 
 ```{r}

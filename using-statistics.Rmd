@@ -2,9 +2,10 @@
 
 This chapter will be a short intro to the most common statistical tests you will encounter in your chemistry courses. For more in-depth explanations, please check out [this useful resource.](https://www.statisticshowto.com/probability-and-statistics/)
 
-The tests we'll be covering in this chapter are:
+The topics we'll be covering in this chapter are:
 
-- Mean, median, and standard deviation
+- Mean vs. median
+- standard deviation, standard error, and confidence intervals
 - Regression analysis and R^2
 - t-test
 - Z-score (test statistic)
