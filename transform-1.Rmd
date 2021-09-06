@@ -212,47 +212,38 @@ We used the `unique()` function with the `type` column so that the number of row
 
 ### Useful summarize functions
 
-We've used the `mean()` and `sd()` functions above, but there are a host of other useful functions you can use in conjunction with summarize. See **Useful Functions** in the `summarise()` documentation (enter `?summarise`) in the console. 
+We've used the `mean()` and `sd()` functions above, but there are a host of other useful functions you can use in conjunction with summarize. See **Useful Functions** in the `summarize()` documentation (enter `?summarize`) in the console. 
 
 ## The pipe: chaining functions together 
 
-With the tools presented here we could do a decent job analyzing our `FAES` data. Let's say we wanted to subtract the mean of the `blank` from each `standard` signal and then get summarize those results. It would look something like this: 
+With the tools we've learned so far in this chapter I think we could do a decent job analyzing our `FAES` data now. Let's say we wanted to subtract the mean of the `blank` from each `standard` signal and then summarize those results. Normally it would look something like this: 
 
 ```{r}
-blank <- filter(FAES, type == "blank")
-meanBlank <- summarize(blank, mean(signal))
-meanBlank <- as.numeric(meanBlank)
+blank <- filter(FAES, type == "blank") #Extract only rows containing blank samples
+meanBlank <- summarize(blank, mean(signal)) #Calculate the mean of the abundance signal values from the blanks
+meanBlank <- as.numeric(meanBlank) #Quick way to convert a single-cell tibble into a numeric value
 
-paste("The mean signal from the blank triplicate is:", meanBlank)
+paste("The mean signal from the blank triplicate is:", meanBlank) #Print a message to the console containing the mean blank signal
 
-stds_1 <- filter(FAES, type == "standard")
-stds_2 <- mutate(stds_1, "cor_sig" = signal - meanBlank)
-stds_3 <- group_by(stds_2, conc_Na)
-stds_4 <- summarize(stds_3, "mean" = mean(cor_sig), "stdDev" = sd(cor_sig))
-stds_4
+stds_1 <- filter(FAES, type == "standard") #Subset the FAES table to contain only standard samples
+stds_2 <- mutate(stds_1, "cor_sig" = signal - meanBlank) #Create a table with a new column containing (standard signals - mean blank signal)
+stds_3 <- group_by(stds_2, conc_Na) #Group rows according to the Na concentration of the standards
+stds_4 <- summarize(stds_3, "mean" = mean(cor_sig), "stdDev" = sd(cor_sig)) #calculate the mean and standard deviation of each group of signal values
+stds_4 #Print variable contents to console
 ```
 
-While the code above did it's job, it's certainly wasn't easy to type and certainly not easy to read. At every step of the way we've saved our updated data outputs to a new variable (`stds_1`, `stds_2`, etc.). However, most of these intermediates aren't important, and moreover the repetitive names clutter our code. As the code above is written, we've had to pay special attending to the variable suffix to make sure we're calling the correct data set as our code has progresses. An alternative would be to reassign the outputs back to the original variable name (i.e. `stds_1 <- mutate(stds_1, ...)`), but that doesn't solve the issue of readability as there's still redundant assigning. 
+While the code above did it's job, it was a chore to type and certainly isn't easy to read. At every step of this code chunk we saved our updated data outputs to a new variable (`stds_1`, `stds_2`, etc.). However, most of these intermediates aren't important, and moreover the repetitive names clutter our code. As the code above is written, we had to pay special attending to the variable suffix to make sure we're calling the correct data set as our code has progresses. An alternative would be to reassign the outputs back to the original variable name (i.e. `stds_1 <- mutate(stds_1, ...)`), but that doesn't solve the issue of readability as there are still redundant assignments happening. 
 
-A solution for this is the pipe operator `%>%` ( pronounced "then"), an incredibly useful tool for writing more legible and understandable code. The pipe basically changes how you read code to emphasize the functions you're working with by passing the intermediate steps to hidden processes in the background. Re-writing the code above, we'd get something like: 
+A solution for this is the pipe operator `%>%` ( pronounced "then"), an incredibly useful tool for writing more legible and understandable code. The pipe streamlines your code by makeing the actual functions stand out more, rather than the constant variable assignments or re-assignments. Let's rewrite the code above to make full use of the pipe, then we'll break down what's actually happening: 
 
 ```{r}
-meanBlank <- FAES %>%
+meanBlank <- FAES %>% 
   filter(type =="blank") %>%
   summarise(mean(signal)) %>%
   as.numeric()
 
 paste("The mean signal from the blank triplicate is:", meanBlank)
-```
 
-Things may look a bit different, but our underlying code hasn't changed much. What's happening is the pipe operator passes the output to the first argument of the next function. So the output of `filter...` is passed to the first argument of `sumamrise...`, and the argument we specified in `summarise` is actually the *second* argument it receives. You're probably wondering how hiding stuff makes your code more legible, but think of `%>%` as being equivalent to "then". We can read our code as:
-
->"Take the `FAES` dataset, *then* filter for `type == "blank"` *then* collapse the dataset to the mean `signal` value and *then* convert to numeric value *then* pass this final output to the new variable `meanBlank`." 
-
-Not only is the pipe less typing, but the emphasis is on the functions so you can better understand what you're doing vs. where all the intermediates are going. Extending our piping to the second batch of code we get:  
-
-
-```{r}
 stds <- FAES %>%
   filter(type == "standard") %>%
   mutate("cor_sig" = signal - meanBlank) %>% 
@@ -262,15 +253,25 @@ stds <- FAES %>%
 stds
 ```
 
-Same thing. The underlying code hasn't changed much, but it's much more legible and we can clearly see we're subtracting the `meanBlank` value from each measured signal then summarizing the corrected signals. 
+Same output as before! The code may look a bit different, but the actual function usage hasn't changed at all. As mentioned above, the pipe operator always passes the output of the previous function to the first argument of the next function. So the output of `filter...` is passed to the first argument of `summarize...`, while the argument specified in `summarize` is actually the *second* argument it receives. You're probably wondering how hiding stuff makes your code more legible, but think of `%>%` as being equivalent to "then". We can read the first chunk of code as:
 
-### Notes on piping
+>"Take the `FAES` dataset, *then* filter for `type == "blank"` *then* collapse the dataset to the mean `signal` value and *then* convert to numeric value *then* pass this final output to the new variable `meanBlank`." 
+
+Not only is the pipe less typing, but the emphasis is on the functions so you can better understand what you're doing vs. where all the intermediates are going. Note that the variable `meanBlank` is only assigned a value *after* all piped functions have been evaluated. 
+
+The second code chunk can be read as:
+
+>"Take the `FAES` dataset, *then* filter for `type == "standard"` *then* add a new column containing blank-subtracted signal values for the standards *then* group by `conc_Na` *then* calculate the mean and standard deviation of the blank-subtracted signal values for each group of standards *then* pass this final output to the new variable `stds`.
+
+Again, the underlying code hasn't changed much, but it's much more legible and we can clearly see we're subtracting the `meanBlank` value from each measured signal then summarizing the corrected signals. 
+
+### Limitations of the pipe
 
 The pipe is great and especially useful with *tidyverse* packages, but it does have some limitations: 
 
-  - You can't easily extract intermediate steps. So you'll need to break up your pipping chain to output any intermediate steps you can. 
-  - The benefit of piping is legibility; this goes away as you increase the number of steps as you lose track of what's going on. Keep the piping short and thematically similar. 
-  - Pipes are linear, if you have multiple inputs or outputs you should consider an alternative approach. 
+  - You can't easily extract intermediate steps. So if you need to use a value or object from an intermediate step elsewhere in your code, you'll need to break up your piping chain first. 
+  - The benefit of piping is legibility; this goes away as you increase the number of steps as you lose track of what's going on. Keep the piping chains short and thematically similar. 
+  - Pipes are always linear, so if you have multiple inputs or outputs you should consider an alternative approach. 
 
 
 ## Further reading

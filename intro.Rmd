@@ -1,9 +1,9 @@
 <!-- This header creates the book section -->
-# (PART\*) Section 1: Getting Started With R{-}
+# (PART\*) Section 1: Getting Started With R {-}
 
 # Installing R
 
-You may have already heard of coding and the programming language R, but figuring out how to get started can be a bit of a challenge. That’s why we wrote this textbook; to give you the boost we wish we’d had. This chapter will cover installing the software you'll need for coding in R.  
+You may have already heard of coding and the programming language R, but figuring out how to get started can be a little overwhelming. That’s why we wrote this textbook; to give you the resources we wish we’d had when we were beginners. This chapter will cover installing the software you'll need for coding in R.  
 
 ## Prerequisite software
 

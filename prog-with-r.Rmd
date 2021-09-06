@@ -1,33 +1,33 @@
-# Programming with R
+# Writing Custom Functions
 
-<!-- Aim of this is to show people how they can include programming features to enhance their coding. Mostly tips and shit to get them started no encompassing guide --> 
+<!-- Aim of this is to show people how they can include programming features to enhance their coding. Mostly tips and shit to get them started, not an all-encompassing guide --> 
 
-Programming is writing instructions that tell the computer what to do. Like most things, learning a little goes a long way. And like most things, it's easy to lose the forest for the trees. That's why we won't focus too much on programming (after all you're chemist not computer scientist) but we will introduce a few simple yet incredibly powerful elements of programming to help you along with your data science quest.
+Like most things, learning a little goes a long way. And like most things, it's easy to lose the forest for the trees. That's why we won't focus too much on programming (after all you're chemists, not computer scientists) but we will introduce a few simple yet incredibly powerful elements of programming to help you along with your data science quest.
 
 We'll point to several sources for further reading on functions at the end of this chapter. 
 
 ## Functions  
   
-Functions allow you to write general purpose code to automate common tasks. They're a great way to decrease repetition and make your code more legible and reproducible. To crease a function in R you only need `function()`:
+Functions allow you to write general purpose code to automate common tasks. They're a great way to decrease repetition and make your code more legible and reproducible. To create a function in R you only need `function()`:
 
 ```{r, error=TRUE}
-funSum <- function(x,y){
+funSum <- function(x,y){ #Declare a new function funSum with two arguments: x and y.
   z <- x + y
-  paste("The sum of", x, "+", y, "is", z, sep =" ")
+  paste("The sum of", x, "+", y, "is", z, sep =" ") #The argument sep=" " tells the paste function to separate each value in the brackets with a single space when                                                     printing to the console.
 }
 
-funSum(1, 3)
-funSum("yes",3)
+funSum(1, 3) #A call to funSum where x = 1 and y = 3
+funSum("yes",3) #A call to funSum where x = "yes" and y = 3
 ```
-What we've done is create a function called `funSum` which takes two numeric inputs `x` and `y`, sums the two into `z` and paste an output telling us the sum. A couple of things to note: 
+What we've done is create a function called `funSum` which takes two numeric inputs `x` and `y`, sums the two into `z` and pastes together an output telling us the sum in the form of a string. A couple of things to note: 
 
   - We need to *explicitly* state which arguments are function will take; in this example they are `x` and `y`. Whatever we pass to `x` or `y` will be carried into the function. 
   - We can't sum non-numeric values, so R returns an error in the second instance
-  - Functions create their own environment, therefore *any variable* created inside a function only exists inside the function.
+  - Functions create their own environment, therefore *any variable created inside a function only exists inside that function*.
     - In the above example, `x`, `y`, and `z` only exist inside the function.
-  - R automatically returns whichever variable is on the last line of the body of the function; but you can explicitly ask for an output using `return()`
+  - R automatically returns whichever variable is on the last line of the body of the function as its output; but you can explicitly ask for an output using `return()`
 
-Let's take a look at a more practical function, something that you might actually use. In mass spectrometry, a gauge of accuracy is the *mass error*, a measure of the difference between the observed and theoretical masses, and is reported in parts-per-million (ppm). The formula for calculating mass error is:
+Let's take a look at a more practical function, something that you might actually use. In mass spectrometry, a common gauge of accuracy is the *mass error*, a measure of the difference between the observed and theoretical masses, and is reported in parts-per-million (ppm). The formula for calculating mass error is:
 
 $$ Mass~error~(ppm) = \frac{|mass_{theoretical} - mass_{experimental}|}{mass_{theorical}} \times 10^6 $$
 
@@ -35,15 +35,15 @@ The formula is simple enough, but you may need to calculate any number of mass e
 
 
 ```{r}
-ppmMS <- function(theoMZ, expMZ){
+ppmMS <- function(theoMZ, expMZ){ #Declare a new function 'ppmMS' with two arguments: 'theoMZ' and 'expMZ'
 
-  ppm <- abs(theoMZ - expMZ)/theoMZ * 1e6
-  ppm
+  ppm <- abs(theoMZ - expMZ)/theoMZ * 1e6 #Same calculation as above. The 'abs()' function returns the absolute of a numeric value.
+  return(ppm)
 }
 
-# Theoretical mass = 1479.63 m/z
-# experimental mass = 1480.10 m/z
-ppmMS(theoMZ = 1479.63, expMZ = 1480.10)
+#Theoretical mass = 1479.94 m/z
+#Experimental mass = 1480.01 m/z
+ppmMS(theoMZ = 1479.94, expMZ = 1480.01)
 ```
 
 Pretty useful if you're manually checking something, but we can also use our functions into the pipe to help our data transformation:
@@ -51,34 +51,35 @@ Pretty useful if you're manually checking something, but we can also use our fun
 
 ```{r}
 
-# Example data
-masses <- data.frame("theo" = c(1479.63, 1479.63, 1479.63),
-                     "exp" = c(1478.63, 1479.63, 1480.10))
+#Example data
+masses <- data.frame("theo" = c(1479.94, 1479.94, 1479.94), #Declare a data frame with two columns "theo" and "exp", each containing a vector of 3 numeric values
+                     "exp" = c(1478.94, 1479.94, 1480.01))
 
 masses %>% 
-  mutate(massError = ppmMS(theo, exp))
+  mutate(massError = ppmMS(theo, exp)) #Add a new column to 'masses' containing the mass error calculated from the first two columns using the ppmMS function.
 
 ```
 
 This last part is critical as *functions make your code more legible*. We can clearly read that the code above is calculating the mass error between the theoretical and experimentally observed masses. This might not be as apparent if we put in a complex mathematical formula in the middle of our pipe. 
 
 
-## Conditional arguments 
+## Conditional statments 
 
-Are used to specify a path in a function depending on whether a statement is `TRUE` or `FALSE`. These are explored in greater detail via the links in the [Further Reading] section, but here's a quick example of a function that uses the conditional `if` statement to print out which number is largest: 
+These are used to specify a path in a function depending on whether a statement evaluates to `TRUE` or `FALSE`. These are explored in greater detail via the links in the [Further Reading] section, but here's a quick example of a function that uses the conditional `if` statement to print out which number is largest: 
 
 ```{r}
 
-isGreater <- function(x, y){
-  if(x > y){
-    return(paste(x, "is greater than", y, sep = " "))
-  } else if (x < y){ 
-    return(paste(x, "is less than", y, sep = " "))
+isGreater <- function(x, y){ #Declares a new function 'isGreater' with two arguments: x and y
+  if(x > y){ 
+    return(paste(x, "is greater than", y, sep = " ")) #If x is greater than y, stop the function and return the pasted string.
+  }else if(x < y){                                  #If x is not greater than y, the previous line is not run and a new condition is tested instead. 
+    return(paste(x, "is less than", y, sep = " ")) #If x is less than y, stop the function and return the pasted string.
   }
-  return(paste(x, "is equal to", y, sep = " "))
+  
+  return(paste(x, "is equal to", y, sep = " ")) #If the function makes it to this line, then return this pasted string as the final output.
 }
 
-isGreater (2, 1)
+isGreater (2, 1) #Call to isGreater, where x = 2 and y = 1
 isGreater (1, 2)
 isGreater (1, 1)
 
@@ -94,18 +95,26 @@ In mass spectrometry undetected compounds are recorded having an intensity of 0;
 
 ```{r}
 
-lod <- 4000 # previously calculated LOD 
-results <- data.frame("mz" = c(308.97, 380.81, 410.11, 445.34 ), # dummy data
+lod <- 4000 #Previously calculated LOD (limit of detection)
+results <- data.frame("mz" = c(308.97, 380.81, 410.11, 445.34 ), #Example data
                       "intensities" = c(0, 1000, 5000, 10000)) 
 
-results %>%
-  mutate(reportedIntensities = case_when(intensities < lod ~ lod/2,
-                                 TRUE ~ intensities))
+removeLow_IC <- function(mzTable, limDetect){ #Declare a new function 'removeLow_IC' with arguments 'mzTable' and 'limDetect'
+  
+  adj_intensities<-mzTable %>% 
+    mutate(reportedIntensities = case_when(intensities < limDetect ~ limDetect/2, 
+                                           TRUE ~ intensities)) 
+    #Create a new column 'reportedIntensities where, for every value in the intensities column, if it is less than than the value of limDetect, then assign a value     of limDetect/2 to that row of the new column. If not, then copy the original intensity value to that row of the new column.
+  
+  return(adj_intensities)
+}
 
+final_results<-removeLow_IC(results, lod) #Call the function 'removeLowIC', with mzTable = results and limDetect = lod
+final_results
 
 ```
 
-Firstly we're creating a new column called `reportedIntesities` using `mutate()` and using `case_when()` to conditionally fill that column. The inputs we've passed to `case_when()` are two-sided formulas. Essentially if the conditions on the left-hand side of the tilda (`~`) evaluate to `TRUE`, `case_when` will execute the right-hand side. Thee first two-sided formula is `intensities < lod ~ lod/2` and checks if the intensities value is less than the previously calculated limit of detection. If `intensitis < lod` evaluates to `TRUE` we insert half of the LOD value for that row. If `intentisites < lod` evaluates to `FALSE`, we move onto the next two-side formula and reevaluate again. The second two-sided formula `TRUE ~ intensities` basically means for everything that's remaining (greater than LOD in our instance) just use the value from the `intensities` column.
+Firstly we're creating a new column called `reportedIntensities` using `mutate()` and using `case_when()` to conditionally fill that column. The inputs we've passed to `case_when()` are two-sided formulas. Essentially if the conditions on the left-hand side of the tilda (`~`) evaluate to `TRUE`, `case_when` will execute the right-hand side. Thee first two-sided formula is `intensities < lod ~ lod/2` and checks if the intensities value is less than the previously calculated limit of detection. If `intensitis < lod` evaluates to `TRUE` we insert half of the LOD value for that row. If `intentisites < lod` evaluates to `FALSE`, we move onto the next two-side formula and reevaluate again. The second two-sided formula `TRUE ~ intensities` basically means for everything that's remaining (greater than LOD in our instance) just use the value from the `intensities` column.
 
 Some ideas to consider when working with `case-when()`:
 
@@ -166,7 +175,7 @@ Here R is telling you that you have an unmatched opening bracket. To resolve the
 
 The `expected ',' after expression` is a common error that you will see accompanying unmatched opening brackets. Sometimes you might get this error in the console after running code that is missing a bracket somewhere. It is good practice to check your parentheses a few times before running your code to make sure that all the commands are closed, and that R doesn't keep waiting for you to continue inputting code after you've click *Run*. If you notice that the `>` in your R console has turned into a `+`, this is likely because you've just run a command that is missing a closing bracket, and thus, R is not aware that your code is finished. Simply input a closing bracket into the console, and the `>` should return.
 
-### Reading error codes
+### Console error codes
 
 While the script window is very useful for pointing out syntax errors in your code, there are many other errors that can arise in RStudio which the script window is not able to capture. These are generally errors that arise from trying to execute your code, rather than from mistakes in your syntax.
 
@@ -202,7 +211,7 @@ class(TRUE)
 
 ## Further Reading
 
-These chapter has been intentional succinct. We've omitted several other aspects of programming in R such as `for` loops, and other iterative programming. To get a better sense of programming in R and to learn more, please see the following links:
+These chapter has been intentionally broad, as functional programming in R is somewhat outside the intended scope of this book. We've omitted several other aspects of programming in R such as `for` loops, and other iterative techniques. To get a better sense of what's possible with R programming and to learn more, please refer to the following links:
 
   - [case_when()](https://dplyr.tidyverse.org/reference/case_when.html): the documentation for the `case_when()` function and several useful examples. 
   - [Chapter 19: Functions](https://r4ds.had.co.nz/functions.html), [Chapter 20: Vectors](https://r4ds.had.co.nz/vectors.html), and [Chapter 21: Iteration](https://r4ds.had.co.nz/iteration.html) of [*R for Data Science*](https://r4ds.had.co.nz/index.html) by H. Wickham and G. Grolemund.  
