@@ -118,6 +118,88 @@ Some ideas to consider when working with `case-when()`:
 
 A good rule when coding is **Don't Repeat yourself!**. In practice, this means don't copy and paste blocks of code to multiple parts of your script. It's more difficult to read (more lines), and if you identify an issue with one block, you'll need to hunt down all the other blocks to rectify the situation (you'll always miss something!). by using functions you'll reduce the number of lines of code, but you'll also only need to check one spot to rectify the issues. 
 
+
+## Troubleshooting error messages
+
+We briefly mentioned error messages in Chapter 3.1, but once you start writing your own code you will inevitably come across many more. Here we'll go through a few of the more common errors you'll encounter and how to fix your code to resolve the issues.
+
+
+### Script diagnostics
+
+When writing code in the Script window, RStudio will highlight any syntax errors in your code with a red squiggly line and an 'x' in the side bar, as shown below. You can hover over the 'x' to see what is causing the error. 
+
+![Figure 3.8: RStudio highlights syntax errors in the Scripts window.](images/Rstudio_diagnostics.png)
+
+In the above message, R is telling you that it is not sure what to do with `b`. As mentioned previously, variable assignment is done in the format `name <- assignment`. However, in the above example, the variable assignment statement is written as `name name <- assignment`. Since variable names cannot contain spaces, R reads `a b` as two separate input variable names, not as a single string. If you wanted to assign a value of 0 to both `a` and `b`, you would need to write the statement once per variable, as shown below.
+
+```{r}
+a <- 0
+b <- 0
+```
+
+Let's look at another example. Some functions require you to write code with nested parentheses. A good example would be the `aes()` argument that is called inside of `ggplot()`, as shown below.
+
+```{r message = FALSE, echo = FALSE}
+library(readr)
+library(ggplot2)
+
+#import ozone data set
+airPol <- read_csv("data/2018-01-01_60430_Toronto_ON.csv")
+```
+
+```{r eval = FALSE}
+#plot ozone concentration vs. time
+ggplot(data = airPol, 
+       aes(x = date.time,
+           y = concentration,
+           colour = pollutant)) +
+  geom_point()
+```
+
+(For more detail about importing and using `ggplot2`, please re-visit Chapter 2, section 2.3.4, or see Chapter 11.)
+
+If you were to forget one of the parentheses in the previous line of code, RStudio would highlight it similar to below:
+
+![Figure 3.9: RStudio highlights unmatched parentheses in the script window.](images/Rstudio_unmatched.png)
+
+Here R is telling you that you have an unmatched opening bracket. To resolve the error, simply add a closing bracket to match. 
+
+The `expected ',' after expression` is a common error that you will see accompanying unmatched opening brackets. Sometimes you might get this error in the console after running code that is missing a bracket somewhere. It is good practice to check your parentheses a few times before running your code to make sure that all the commands are closed, and that R doesn't keep waiting for you to continue inputting code after you've click *Run*. If you notice that the `>` in your R console has turned into a `+`, this is likely because you've just run a command that is missing a closing bracket, and thus, R is not aware that your code is finished. Simply input a closing bracket into the console, and the `>` should return.
+
+### Reading error codes
+
+While the script window is very useful for pointing out syntax errors in your code, there are many other errors that can arise in RStudio which the script window is not able to capture. These are generally errors that arise from trying to execute your code, rather than from mistakes in your syntax.
+
+The following is a prime example of such an error.
+
+```{r error = TRUE}
+q <- 8 + "hi"
+```
+
+Here we are trying to add a numeric value (8) to a character string ("hi"), then set the sum of the two to variable `q`. R has given us an error in return, because there is no logical way for R to add a numeric value to non-numeric text.
+
+The error indicates that we have passed a `non-numeric argument to binary operator`, meaning we have used a non-numeric data type for an expression which is exclusively reserved for numeric data. If you try to add, divide or multiply two character strings using arithmetic operations in the console, you will get the same error. 
+
+```{r error = TRUE}
+"hey" * "hi"
+```
+
+It is important to be aware of these error codes as many functions require specific data types as their inputs. You can always look at the required data type by looking at the documentation for the function (generally, this can be viewed by typing `?function` into the console, where `function` is the name of the function). If the function requires numeric data, inputting character strings or logical values will throw the errors shown above. If the function requires logical values, inputting numeric data or character strings will throw the errors shown above. 
+
+In order to avoid these errors, make sure that you are using the right type of data in your functions. You can always check your data type using `class()`. Some examples are shown below.
+
+```{r}
+class("hi")
+
+class(10)
+
+class(1L)
+
+class(TRUE)
+```
+
+
+
 ## Further Reading
 
 These chapter has been intentional succinct. We've omitted several other aspects of programming in R such as `for` loops, and other iterative programming. To get a better sense of programming in R and to learn more, please see the following links:

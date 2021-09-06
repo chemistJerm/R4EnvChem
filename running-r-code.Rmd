@@ -178,11 +178,12 @@ View(airPol)
 
 Note that `read_csv()` requires us to specify the file name, but in the above example we prefixed our file name with `"data/2018..."`. This is because the `.csv` file we want to open is stored in the `data` sub-folder. By specifying this in the prefix, we tell `read_csv()` to first go to the `data` sub folder in the working directory and *then* search for and open the specified data file. 
 
-What we've done above is called *relative referencing* and it's a huge benefit of projects. The actual data file is stored somewhere on your computer in a folder like `"C:/User/Your_name/Documents/School/Undergrad/Second_Year/R4EnvChemTemplate/data/2018-01-01_60430_Toronto_ON.csv"`. If we weren't in a project, this is what you'd need to type to open your file, but since we're working in the project, R assumes the long part, and begins searching for files inside the project folder. Hence, why we only need `"data/2018..."`. Not only is this much simpler to type, and but it makes sharing your work with colleagues, TAs, and Profs (and yourself!) much easier. In other words, if you wanted to share your code, you would send the entire project folder (code & data) and the receiver could open it and run it as is. 
-<!--
+What we've done above is called *relative referencing* and it's a huge benefit of projects. The actual data file is stored somewhere on your computer in a folder like `"C:/User/Your_name/Documents/School/Undergrad/Second_Year/R4EnvChemTemplate/data/2018-01-01_60430_Toronto_ON.csv"`. If we weren't in a project, this is what you'd need to type to open your file, but since we're working in the project, R assumes the long part, and begins searching for files inside the project folder. Hence, why we only need `"data/2018..."`. Not only is this much simpler to type, and but it makes sharing your work with colleagues, TAs, and Profs (and yourself!) much easier. In other words, if you wanted to share your code, you would send the entire project folder (code & data) and the receiver could open it and run it as 
+
+
 ## Vectors and Lists
 
-R has other data structures which aren't as frequently used, but it's worth being aware of their existence as we might refer to these in later chapters.
+R has other data structures which aren't as frequently used, but it's worth being aware of their existence as we will be making use of these in later chapters.
 
   - **Vectors** contain multiple elements *of the same type*; either numeric, character (text), or logical. Vectors are created using `c()`, which is short for "combine". A data frame is just multiple vectors arranged into columns. Some examples of vectors are shown below. 
 
@@ -202,9 +203,8 @@ log
 hi <- list("Hello", c(5, 10, 15, 20), c(TRUE, TRUE, FALSE))
 hi
 ```
-Again, you don't need to worry too much about these right now, but if you are interested in learning more about more advanced data structures, you can check out the  [*Data structure*](http://adv-r.had.co.nz/Data-structures.html) chapter of *Advanced R* by Hadley Wickham.
--->
-<!--Considering this info won't come up for quite some time, probably best to move it later, or just provide a link for more info...-->
+Again, you don't need to worry too much about these until Section 2, but if you are interested in learning more about more advanced data structures, you can check out the  [*Data structure*](http://adv-r.had.co.nz/Data-structures.html) chapter of *Advanced R* by Hadley Wickham.
+
 ## R Functions
 
 Functions are bits of code written to execute a specific task. We've already used several functions such as `library()` to import packages, and `read_csv()` to read the air quality data as seen in [Data Structures] above. Functions offer a convenient means to reduce the amount of typing while making code more reliable and readable. Some of these functions are built into R, such as `library()`, but often people write new functions to improve upon base R to help it meet the needs of it's users, such as the `read_csv()`. A collection of functions for a similar tasks is stored in a package, such as the `tidyverse` suite of packages which contains functions for plotting (`ggplot2`), reading data `read_csv()` and more. 

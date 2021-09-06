@@ -1,7 +1,7 @@
-# Tidying your data
+# Tidying Your Data
 
 
-You might not have explicitly thought about how you store your data, whether working in *Excel* or elsewhere. Data is data after all. But having your data organized in a systematic manner that is conducive to your goal is paramount for working not only with R, but all of your experimental data. This chapter will introduce the concept of *tidy* data, and some of the tools of the *dplyr* package to get there. Lastly we'll offer some tips for how you should record *your* data in the lab. A bit of foresight and consistency can eliminate hours of tedious work down the line. 
+You might not have explicitly thought about how you store your data, whether working in *Excel* or elsewhere. Data is data after all. But having your data organized in a systematic manner that is conducive to your goal is paramount for working not only with R, but all of your experimental data. This chapter will introduce the concept of *tidy* data, and how to use some of the tools of the *dplyr* package to get there. Lastly we'll offer some tips for how you should record your data in the lab. A bit of foresight and consistency can eliminate hours of tedious work down the line. 
 
 ## What is tidy data?
 
@@ -13,13 +13,22 @@ Tidy data has "...each variable in a column, and each observation in a row..." [
 knitr::include_graphics("images/tidy-example.png")
 ```
 
-In the *tidy* or *long* format, we reclassified out data into three variables (*Sample*, *Chemical*, and *Reading*). This makes the observations clearer as now we know we measured two chemicals (*A* and *B*) in two samples (*blank* and *unknown*) and we've explicitly declared the *Reading* variable for our measured instrument response, which was only implied in the original layouts. Moreover, we can read across a row to get the gist of one data point (i.e. "Our blank has a reading of 0 for Chemical A"). Again we haven't changed any information, we've simply reorganized our data to be clearer, consistent, and compatible with the `tidyverse` suit of tools. 
+In the *tidy* or *long* format, we reclassified our data into three variables (*Sample*, *Chemical*, and *Reading*). This makes the observations clearer as now we know we measured two chemicals (*A* and *B*) in two samples (*blank* and *unknown*) and we've explicitly declared the *Reading* variable for our measured instrument response, which was only implied in the original layouts. Moreover, we can read across a row to get the gist of one data point (i.e. "Our blank has a reading of 0 for Chemical A"). Again we haven't changed any information, we've simply reorganized our data to be clearer, consistent, and compatible with the `tidyverse` suit of tools. 
 
 This might seem pedantic now, but as you progress you'll want to reuse code you've previously written. This is greatly facilitated by making every data set as consistently structured as possible, and the *tidy* format is an ideal starting place. 
 
-## Tools to tidy your data
+## Recording data in tidy format
 
-Now one of the more laborious parts of data science is tidying your data. If you can follow the tips in the [Tips for recording data] section, but the truth is you often won't have control. To this end, the `tidyverse` offers several tools, notable `dplyr` (pronounces 'd-pliers'), to help you get there. 
+As we mentioned, tidying data in R is much easier if the data is recorded consistently. You can't always control how your data will look, but in the event that you can (i.e. your inputting the instrument readings into *Excel* on the bench top) here are some tips to make your life easier: 
+
+- *Be consistent*. When naming your samples, make sure they all contain the same elements in the same order. The sample names `Toronto_O3_1` and `Toronto_O3_2` can easily be broken up as demonstrated in [Separating columns] below; `O3_Toronto_1`, `TorontoO32`, and `Toronto_1` can't be so easily organized. 
+- *Use simple headers and avoid spaces*. Often you'll be pasting instrument readings into one `.csv` using *Excel* on whatever computer records the instrument readings. In these situations it's often much easier to paste things in columns. Tidyverse functions don't always play nicely when spaces are involved, so always use underscores (`_`) instead of spaces. `Chemical_A_1` and `Chemical_B_2` are headers that are descriptive for your sample and can be easily pivoted into their own columns. `Chemical A 1 ( I think?!)` is a header isn't.
+- *Make sure data types are consistent within a column*. This harks back to the [Importing data into R] chapter, but a single non-numeric character can cause R to misinterpret an entire column leading to headaches down the line. 
+- *Save your data in UTF-8 format*. Excel and other programs often allow you to export your data in a variety of `.csv` encodings, but this can affect how R reads when importing your data. Make sure you select `UTF-8` encoding when exporting your data. 
+
+## Tidying your data in R
+
+One of the more laborious parts of data science is tidying your data. If you can, follow the tips in the [Tips for recording data] section, but the truth is you often won't have control over this. To this end, the `tidyverse` suite offers several tools, notably the`dplyr` (pronounced 'dee-ply-arr') package to help you get there. 
 
 Let's revisit our spectroscopy data from the previous chapter:
 
@@ -34,7 +43,7 @@ DT::datatable(atr_plastics)
 ```
 
 
-As we can see this our ATR spectroscopy results of several plastics, as recorded for a *CHM 317* lab, is structured similarly to the example in Figure \@ref(fig:tidy-example)A. The ATR absorbance spectra of the four plastics are recorded in separate columns. Again, this format makes intuitive sense when recording in the lab, and for working in Excel, but isn't the friendliest with R. In the example below we can only specify one `y` value for `ggplot` to plot. In our example it's the absorbance spectrum of `Polystyrene`. However, if wanted to plot the other spectra for comparison, we'd need to repeat our `geom_point` call.
+As we can see this our ATR spectroscopy results of several plastics, as recorded for a *CHM 317* lab, is structured similarly to the example in Figure \@ref(fig:tidy-example)A. The ATR absorbance spectra of the four plastics are recorded in separate columns. Again, this format makes intuitive sense when recording in the lab, and for working in Excel, but isn't the friendliest with R. When making plots with `ggplot`, we can only specify one `y` variable. In the example plot below it's the absorbance spectrum of `Polystyrene`. However, if wanted to plot the other spectra for comparison, we'd need to repeat our `geom_point` call.
 
 ```{r}
 # Plotting Polystyrene absorbance spectra
@@ -56,27 +65,34 @@ ggplot(data = atr_plastics,
 
 ### Making data 'longer'
 
-While code above works, it's not particularly handy and undermines much of the utility of `ggplot` because the data *isn't* tidy. Fortunately the `pivot_longer` function can easily restructure our data into the *long* format to work with `ggplot`. Let's demonstrate that: 
+While code above works, it's not particularly handy and undermines much of the utility of `ggplot` because the data *isn't* tidy. Fortunately the `pivot_longer` function can easily restructure our data into the *long* format to work with `ggplot`. `pivot_longer()` works by gathering up multiple columns and transposing them into just two new columns. The first contains all the column headers of the original columns (`names`), and the second contains all the data from those columns(`values`).
+
+Let's demonstrate this with `atr_plastics`: 
 
 ```{r}
+atr_plastics
 
-atr_long <- atr_plastics %>%
-  pivot_longer(cols = -wavenumber, 
-               names_to = "sample",
-               values_to = "absorbance") 
+atr_long <-pivot_longer(data = atr_plastics,
+  cols = -wavenumber, 
+  names_to = "sample",
+  values_to = "absorbance") 
 
-head(atr_long)
+atr_long
 
 ```
 
 Let's break down the code we've executed via the `pivot_longer` function:
 
-1. `cols = -wavenumber` specifies that we're selecting every other column *but* wave number. 
-    - we could have just as easily specified each column individually using `cols = c("EPDM",...)` but it's easier to use `-` to specify what we *don't* want to select. 
-2. `names_to = "sample"` specifies that the column header (i.e. names) be converted into an observation under the `sample` column.
-3. `values_to = "absorbance"` specifies that the absorbance values under each of the selected headers be placed into the `aborsbance` column. 
+  -`data = atr_plastics` specifies the tibble we're trying to convert into long format
+  - `cols = -wavenumber` indicates that we're selecting every column **except** `wavenumber`. In R, the negative sign `-` negates whatever immediately follows it, so `-wavenumber` is read as: NOT wavenumber.
+    - we could have also used a vector to specify each column individually using `cols = c("EPDM",...)` but it's often easier to just use `-` to specify what we *don't* want to select. 
+  -`names_to = "sample"` specifies that the remaining column headers (i.e. names) be converted into an observation in a new column called `sample`.
+  -`values_to = "absorbance"` specifies that the absorbance values under each of the those same old columns be placed into a new column called `absorbance`. 
 
-Now that we've reclassified out data into the 'longer', we can exploit the explicitly introduced *sample* variable to easily plot all of our spectra:
+We can see in the tibble for `atr_long`, above, that it contains way more rows than there were in `atr_plastics`. Looking at the `wavenumber` column can give us a clue as to why this might be. Each value in `wavenumber` appears 4 times, once for each unique entry in the `sample` column. In fact, every value in `wavenumber` and `sample` were duplicated enough times so that every row of the tibble would contain a unique set of 3 values, which is the ultimate goal of *tidy* data.
+
+
+Now that we've pivoted our data into a *longer format*, we can use the new *sample* column as a grouping variable to easily plot all of our spectra on a single plot:
 
 ```{r}
 ggplot(data = atr_long, 
@@ -88,7 +104,7 @@ ggplot(data = atr_long,
 ```
 
 
-We'll talk more about `ggplot` in the *Visualizations* chapter, but for now you can understand how our code could scale to accommodate any number of different samples, whereas the previous attempt would require an explicit call to each column. 
+We'll talk more about how to modify `ggplot` in the *Visualizations* chapter, but for now you can understand how our code could scale to accommodate any number of different samples, whereas our previous attempt to graph the *wide* data required an explicit call to geom_point() for every data column. 
 
 
 `pivot_longer` has many other features that you can take advantage of. We highly recommend reading the examples listed on the [pivot_longer page](https://tidyr.tidyverse.org/reference/pivot_longer.html) to get a better sense of the possibilities. For example it's common to record multiple observations in a single column header, i.e. `Chemical_A_0_mM`. We can exploit common naming conventions like this to easily split up these observations as shown below. 
@@ -104,14 +120,17 @@ example <- data.frame("wavelength_nm" = c(488, 572) ,
 
 ```
 
+The above code creates a data frame with 5 named columns, each containing two values. Recall from Chapter 3.6 ([Vectors and Lists]) that the `c()` function (short for "combine") is used to create a vector.
+
+
 
 ```{r}
-head(example)
+example
 
 
 
-example_long <- example %>%
- pivot_longer(
+example_long <- pivot_longer(
+   data = example,
    cols = starts_with("Chemical"),
    names_prefix = "Chemical_",
    names_to = c("Chemical", "Concentration", "Conc_Units"),
@@ -120,9 +139,30 @@ example_long <- example %>%
    values_drop_na = TRUE
  )
 
-head(example_long)
+example_long
   
 ```
+Here we see a few more complex ways to select specific columns and pivot data cleanly:
+
+  -`starts_with("Chemical")` will only select columns for pivoting which have headers starting with the character string "Chemical".
+    -`starts_with()` is a helper function, and can only be used inside other tidyverse functions.
+  -`names_prefix = "Chemical_` will remove the characters "Chemical_" from the start of any selected column headers which contain those characters in that order.
+  -`names_to = c("Chemical", "Concentration", "Conc_Units")` will create 3 new named columns among which to distribute our selected column headers as values.
+    -Pivoting to multiple columns like this requires the `names_sep()` argument to also be provided.
+  -`names_sep = "_"` will separate the old column header strings at the `_` character.
+  -`values_drop_na = TRUE` tells `pivot_longer` to not create rows in the new tibble if they would contain an NA value.
+    -Notice how there is no row in the new tibble for Chemical B at concentration 1 mM and wavelength 488 nm.
+
+The `names_prefix`, `names_to`, and `names_sep` arguments above mean that the column header "Chemical_A_0_mM" would first be stripped of the specified prefix resulting in "A_0_mM". Then, this string would be separated at the `_` character and distributed across 3 new columns ("Chemical" = A, "Concentration" = 0, "Conc_Units" = mM).
+
+Note how the Concentration column is still in `<chr>` format? This is because R still sees it as being part of a separated string. We can convert it to a more useful `<dbl>` format by using the `$` operator to select only the Concentration column and change its data type.
+
+```{r}
+example_long$Concentration<-as.double(example_long$Concentration)
+
+example_long
+```
+
 
 ### Making data 'wider'
 
@@ -136,11 +176,8 @@ Sometimes your data has already been recorded in a tidy-ish fashion, but there m
 
 sep_example <- data.frame("sample" = c("Toronto_O3_1","Toronto_O3_2", "Toronto_NO2_1"), 
                           "reading" = c("10", "22", "30"))
+# Example data frame with multiple encoded observations
 
-```
-
-```{r}
-# Example with multiple encoded observations
 sep_example
 ```
 
@@ -149,14 +186,15 @@ The example above is something you'll come across in the lab, most often with th
 ```{r}
 # Separating observations
 
-sep_example %>%
-  separate(
+sep_example <- separate(
+    data = sep_example,
     col = sample, 
     into = c("location", "chemical", "replicateNum"),
     sep = "_",
     remove = TRUE, 
     convert = TRUE)
 
+sep_example
 ```
 Again, let's break down what we did with the `separate` function: 
 
@@ -166,7 +204,7 @@ Again, let's break down what we did with the `separate` function:
 4. `remove = TRUE` removes the original sample column, no need for duplication; setting this to `FALSE` would keep the original column. 
 5. `convert = TRUE` converts the new columns to the appropriate data format. In the original column ,the replicate number is a character value because it's part of a string, `convert` ensures that it'll be converted to a numerical value. 
 
-Again it's paramount to **be consistent when recording data**. 
+Again it's paramount to **be consistent when recording data**.
 
 ### Uniting/combining columns 
 
@@ -174,52 +212,19 @@ The opposite of the `separate` function is the `unite` function. You'll use it f
 
 ### Renaming columns/headers
 
-Sometimes a name is lengthy, or cumbersome to work with in R. While something like `This_is_a_valid_header` is valid and compatible with R and tidyverse functions, you may want to change it to make it easier to work with (i.e. less typing). Simply use the `rename` function:
+Sometimes a name is lengthy, or cumbersome to work with in R. While something like `This_is_a_valid_header` is valid and compatible with R and tidyverse functions, you may want to change it to make it easier to work with (i.e. less typing). Simply use the `rename` helper function:
 
 ```{r, echo = FALSE}
 
 badHeader <- data.frame("UVVis_Wave_Length_nM" = c(500, 501),
                         "Absorbance" = c(1, 0.999))
-
+colnames(badHeader)
 ```
 ```{r}
-colnames(badHeader)
-
 colnames(rename(badHeader, wavelength_nM = UVVis_Wave_Length_nM))
 ```
+In the `rename` function, the first argument must be the data frame containing the columns you want to rename, followed by the new column name assignments in the format 'new_name = old_name'
 
-
-### Rounding numbers
-
-If you want to round the numbers in your data to account for significant figures or something, you can do so using the `round` function. 
-
-```{r, echo = FALSE}
-
-example <- data.frame("measurement" = c("A", "B", "C"),
-                      "absorbance" = c(123.123, 300.000, 175.547),
-                      "conc" = c(1.1, 3.0000223432, 1.75))
-
-```
-
-```{r}
-
-head(example)
-
-# rounding 'conc' column to 1 decimal. 
-
-example %>% 
-  mutate_at(vars(conc), round, 1)
-
-```
-
-## Tips for recording data
-
-In case you haven't picked up on it, tidying data in R is much easier if the data is recorded consistently. You can't always control how your data will look, but in the event that you can (i.e. your inputting the instrument readings into *Excel* on the bench top) here are some tips to make your life easier: 
-
-- *Be consistent*. If you're naming your samples make sure they all contain the same elements in the same order. The sample names `Toronto_O3_1` and `Toronto_O3_2` can easily be broken up as demonstrated in [Separating columns]; `O3_Toronto_1`, `TorontoO32`, and `Toronto_1` can't be. 
-- *Use as simple as possible headers*. Often you'll be pasting instrument readings into one `.csv` using *Excel* on whatever computer records the instrument readings. In these situations it's often much easier to paste things in columns. Recall the capabilities of `pivot_longer` and how you can break up names as described in [Making data 'longer']. `Chemical_A_1` and `Chemical_B_2` are headers that are descriptive for your sample and can be easily pivoted into their own columns. `Chemical A 1 ( I think?!)` is a header isn't.
-- *Make sure data types are consistent within a column*. This harks back to the [Importing data into R] chapter, but a single non-numeric character can cause R to misinterpret an entire column leading to headaches down the line. 
-- *Save your data in UTF-8 format*. Excel and other programs often allow you to export your data in a variety of `.csv` encodings, but this can affect how R reads when importing your data. Make sure you select `UTF-8` encoding when exporting your data. 
 
 ## Further reading
 

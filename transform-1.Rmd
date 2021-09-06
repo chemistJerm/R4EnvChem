@@ -16,15 +16,19 @@ Let's explore the functionality of `dplyr` using some flame absorption/emission 
 
 ```{r, message = FALSE}
 # Importing using tips from Import chapter
-FAES <- read_csv(file = "data/FAESdata.csv") %>% # see section on Pipe
-  pivot_longer(cols = -std_Na_conc,
-               names_to = "replicate", 
-               names_prefix = "reading_",
-               values_to = "signal") %>%
-  separate(col = std_Na_conc,
-           into = c("type", "conc_Na", "units"),
-           sep = " ",
-           convert = TRUE)
+FAES <- read_csv(file = "data/FAESdata.csv")
+
+FAES <- pivot_longer(data = FAES,
+    cols = -std_Na_conc,
+    names_to = "replicate", 
+    names_prefix = "reading_",
+    values_to = "signal")
+
+FAES <- separate(data = FAES,
+    col = std_Na_conc,
+    into = c("type", "conc_Na", "units"),
+    sep = " ",
+    convert = TRUE)
 
 DT::datatable(FAES)
 ```
@@ -39,11 +43,11 @@ DT::datatable(FAES)
 filter(FAES, conc_Na == 0)
 ```
 
-Note how we need to pass logical operations to `filter()`. In the above code, we used `filter()` to get all rows where the concentration of sodium is equal to 0 (`== 0`). Note the presence of two equal signs (`==`). In R one equal sign (`=`) is used to pass an argument, two equal signs (`==`) is the logical operation "is equal" and is used to test equality (i.e. that both sides have the same value). A frequent mistake is to use `=` instead of `==` when testing for equality. 
+Note how we need to pass logical operations to `filter()` to tell it which rows to extract. In the above code, we used `filter()` to get all rows where the concentration of sodium is equal to 0 (`== 0`). Note the presence of two equal signs (`==`). In R one equal sign (`=`) is used to pass an argument, two equal signs (`==`) is the logical operation "is equal" and is used to test equality (i.e. that both sides have the same value). A frequent mistake is to use `=` instead of `==` when testing for equality. 
 
-### Logical oeprators
+### Logical operators
 
-`filter()` can use other *relational* and *logical* operators, or combinations thereof, to improve your sub-setting. Relational operators compare values and logical operators carry out Boolean operations (TRUE or FALSE). Logical operators are used to combine multiple relational operators... let's just list what they are and how we can use them:
+`filter()` can use other *relational* and *logical* operators or combinations thereof. Relational operators compare values and logical operators carry out Boolean operations (TRUE or FALSE). Logical operators are used to combine multiple relational operators... let's just list what they are and how we can use them:
 
 ```{r, echo = FALSE}
 
@@ -112,13 +116,21 @@ Just note with `arrange()` that `NA` values will always be placed at the bottom,
 ```{r}
 select(FAES, signal)
 ```
-You can also select multiple columns using the same helper functions describes in [Importing data into R]. 
+You can also select multiple columns using the same helper functions described in [Tidying Your Data]. 
 
+```{r}
+select(FAES, -units)
+```
+```{r}
+select(FAES, starts_with("conc"))
+```
+-Using a colon `:` selects all columns between two provided header names (inclusive)
 ```{r}
 select(FAES, conc_Na:replicate)
 ```
+
 ```{r}
-# Getting columns containing the character "p"
+# Getting columns where the header contains the character "p"
 select(FAES, contains("p"))
 ```
 
@@ -149,30 +161,54 @@ There are a myriad of functions you can make use of with the mutate function. He
 
 ```{r, echo = FALSE}
 
-funs <- data.frame("function" = c("+", "-", "*", "/", "^", "log()"),
-                   "definition" = c("additon", "subtraction", "multiplication", "division", "exponent; to the power off...", "returns the specified base-log; see also log10() and log2()"))
+funs <- data.frame("function" = c("+", "-", "*", "/", "^", "log()", "round()"),
+                   "definition" = c("additon", "subtraction", "multiplication", "division", "exponent; to the power off...", "returns the specified base-log; see also log10() and log2()", "rounds to a specified number of decimal places"))
 
 knitr::kable(funs)
-
-
 ```
+```{r}
+FAES_ex <- select(FAES, signal)
+mutate(FAES_ex, "rounded_signal" = round(signal, digits = 1), "log10_signal" = log10(signal), "log2_signal" = log2(signal), "doubled_signal" = signal + signal)
+```
+
+
 
 ## Group and summarize data
 
-`summarize` effectively summarized your data based on functions you've passed to it. Looking at our `FAES` data we'd probably want the mean of the triplicate signals, alongside the standard deviation. Let's see what happens when we apply the summarize function straight up: 
+`summarize` effectively summarizes your data based on functions you've passed to it (and uses a similar syntax to the `mutate` function to create new columns). Looking at our `FAES` data we'd probably want the mean of the triplicate signals, alongside the standard deviation. Let's see what happens when we apply the summarize function straight up. 
 
 ```{r}
-summarise(FAES, "mean" = mean(signal), "stdDev" = sd(signal))
+FAES
+summarize(FAES, "mean" = mean(signal), "stdDev" = sd(signal))
 ```
 
-This doesn't look like what we wanted. What we got was the mean and standard deviation of *all* of the signals, regardless of the concentration of the standard. Also note how we've lost the other columns/variables and are only left with the mean and stdDev. This is all because we need to **group** our observations by a variable. We can do this by using the `group_by()` function.
+This doesn't look like what we wanted. What we got was the mean and standard deviation of *all* of the signals, including standards and blanks. Also note how we've lost the other columns/variables and are only left with the mean and stdDev. This is all because we need to **group** our observations by a variable. We can do this by using the `group_by()` function.
 
 ```{r}
+FAES
+groupedFAES <- group_by(FAES, type)
+summarize(groupedFAES, "mean" = mean(signal), "stdDev" = sd(signal))
+```
+Essentially, *grouping* a tibble invisibly organizes it into 1 or more sub-tables. The summarize and mutate functions will then apply their operations to each group seperately. This is why the summarize function produced a separate `mean` for each of our two groups. Grouping is a very powerful data organizing technique which will make it much easier to quickly organize and perform operations on large datasets.
+
+Still, it would be nice if we could also get separate mean and stdDev values for each concentration of standard as well. Let's try grouping by both `type` and `conc_Na`.
+
+```{r}
+FAES
 groupedFAES <- group_by(FAES, type, conc_Na)
-summarise(groupedFAES, "mean" = mean(signal), "stdDev" = sd(signal))
+summarize(groupedFAES, "mean" = mean(signal), "stdDev" = sd(signal))
 ```
 
-Here we've created a new data set, `groupedFAES`, that we grouped by the variables `type` and `conc_Na` so we could get the mean and standard deviation of each group. Note the multiple levels of grouping. For this data set we could have omitted the `type` variable, but in larger datasets you may have multiple groupings (i.e. from different location), so you can group by multiple variables to get smaller groups. 
+Here we've created a new data set, `groupedFAES`, that we grouped by the variables `type` and `conc_Na` so we could get the mean and standard deviation of each group. Note the multiple levels of grouping. This new tibble has a total number of rows equal to the number of unique group combinations. For this data set we could have omitted the `type` variable, but in larger datasets you may have multiple groupings (e.g. different sampling locations), so you can group by multiple variables to get smaller groups. 
+
+The other benefit to using multiple groups is that the summarize function automatically retains grouping variables in the new summary table. If we only grouped the data by `conc_Na` but still wanted to retain the `type` column in our summary table, we would have to declare it separately:
+
+```{r}
+FAES
+groupedFAES <- group_by(FAES, conc_Na)
+summarize(groupedFAES, "type" = unique(type), "mean" = mean(signal), "stdDev" = sd(signal))
+```
+We used the `unique()` function with the `type` column so that the number of rows would be less than or equal to the number of groups. When there is a mismatch in the number of rows across the columns being summarized, then the values in the shorter columns are duplicated within groups until there are an equal number of rows in each column. Try the above code without the `unique` function (`"type" = type`) and you'll see what I mean.
 
 ### Useful summarize functions
 
