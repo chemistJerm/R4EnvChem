@@ -1,8 +1,46 @@
 
 <!-- This header creates the chapter -->
-# R coding basics
+# R Coding Basics
 
-Now that you know how to navigate RStudio and have a working project, we'll take a look at the basics of R. As we're chemist first, and not computer programmers, we'll try and avoid as much of the nitty-gritty underneath the hood aspects of R. However, a risk of this approach is being unable to understand errors and warnings preventing your code from running. As such, we'll introduce the most important and pertinent aspects of the R language to meet your environmental chemistry needs. 
+Now that you know how to navigate RStudio and have a working project, we'll take a look at the basics of R. As we're chemists first and not computer programmers, we'll try and avoid as much of the nitty-gritty underneath the hood aspects of R. However, a risk of this approach is being unable to understand errors and warnings preventing your code from running. As such, we'll introduce the most important and pertinent aspects of the R language to meet your environmental chemistry needs. 
+
+
+## Running R Code
+
+To start, let's get familiar with running R code directly from the console. Throughout the book, code you can copy and run will look like this (mouse over the first box to see the quick copy button): 
+
+```{r}
+2 + 2
+```
+
+Note that both the code (the first box) and what the code outputs (the second box) are shown above. In this book, code outputs will be preceded by `##` to differentiate them from inputs. Your console will not display this part. 
+
+The console is handy for short and sweet snippets of code, usually something that can be typed in a single line. A common use is for simple calculations:
+
+```{r}
+2 * 3
+```
+```{r}
+pi * (10/2)
+```
+
+
+## Installing packages
+
+Packages are collections of functions which extend the capabilities of the default installation of R (which we will refer to as base R). Typically packages are created to address specific issues or workflows in different types of analysis. This book will make frequent use of a family of packages called the `tidyverse`. These packages all share a common thought process and integrate naturally with one another. You **must** install this package suite, or very little of the sample code in this book will run properly.
+
+We can download the entire suite of `tidyverse` packages by typing (or copying and pasting) the following code into the console and pressing 'enter'.
+
+```{r, eval = FALSE}
+install.packages("tidyverse")
+```
+
+You'll see a flurry of lines printed to the console indicating the status of the installation. Once installed you won't be able to use these functions until you load it with `library()`. Enter the code below into the console to load the `tidyverse` package.
+
+```{r}
+library(tidyverse)
+```
+The output shows us which packages are included in the `tidyverse()` and their current version numbers, as well as conflicts (where functions from different packages share the same name). Don't worry about these for now. 
 
 ## Variables
 
@@ -14,15 +52,15 @@ We've already talked about how R can be used like a calculator:
 (2 * 3) + (5 * 4)
 ```
 
-But managing these inputs and outputs is simplified with **variables**. Variables in R, like those you've encountered in math class, can only have one value, and you can reference or pass that value along by referring the variable name. And, unlike the variables in math classes, you can change that value whenever you want. Another way to think about it that a variable is a box in which you store your value. When you want to move (reference) your value, you move the box (and whatever is inside of it). Then you can simply open the box somewhere else without having to worry about the hassle of what's inside. 
+But managing these inputs and outputs is simplified with **variables**. Variables in R, like those you've encountered in math class, can only have one value, and you can reference or pass that value along by referring the variable name. And, unlike the variables in math classes, you can change that value whenever you want. Another way to think about it is that a variable is like a map which shows the location of what you've stored in it. The value or object being stored can stay put, but no matter where you are your map (variable) will always point back to it. 
 
-You can assign the outputs variables using `<-`, as shown below. 
+We can assign a value to a variable using `<-`, as shown below. 
 
 ```{r}
 x <- 12
 x
 ```
-In addition to reading code top to bottom, you often *read it from right to left*. `x <- 12` would be read as "take the value `12` and store it into the variable `x`". The second line of code, `x`, simply returns the value stored inside `x`. Note that when a variable is typed on it own, R will print out it's contents. You can now use this variable in snippets of code:
+`x <- 12` can be read as "the variable x is assigned the value of `12`". The second line of code, `x`, simply returns the value stored inside `x`. Note that when a variable is typed on it own (also known as a "call"), R will print out it's contents. This does not change the value stored in it, but is merely a quick way for us to see the variable's contents. Now that we have a variable defined, let's learn how to modify it: 
 
 ```{r}
 x
@@ -30,17 +68,28 @@ x <- x * 6.022e23
 x
 ```
 
-Remember, we're evaluating from right to left, so the code above is taking the number `6.022e23` and multiplying it by the value of `x`, which is 12 and storing that value back into `x`. Note that variable names are case sensitive, so if your variable is named `x` and you type `X` into the console, R will not be able to print the contents of `x`. Variable names can consist of letters, numbers, dots (`.`) and/or underlines (`_`). Here are some rules and guidelines for naming variables in R: 
+The code above shows how the contents of a variable can be modified using its current value. The first time `x` is called here, it returns the value of `12` which was assigned above. Next, we assign x a new value based on its current value, which here can be read as: "the variable x is assigned the value of (current value of x, i.e. `12`) multiplied by `6.022e23`. Now, when `x` is called it returns its newly assigned value of `7.2264e+24`. 
 
-  - **Rules** dictated by R
+You can also override the contents of `x` entirely by assigning it a new value:
+
+```{r}
+x
+x <- 25
+x
+```
+
+
+Note that variable names are case sensitive, so if your variable is named `x` and we type `X` into the console, R will not be able to print the contents of `x`. Variable names can consist of letters, numbers, dots (`.`) and/or underlines (`_`). Here are some rules and guidelines for naming variables in R: 
+
+  - **Variable Name Requirements** (dictated by R)
     - names must begin with a letter or with the dot character. `var` and `.var` are acceptable.
     - Variable names *cannot* start with a number or the `.` character cannot be preceded by  number. `var1` is acceptable, `1var` and `.1var` are not. 
     - Variable names *cannot* contain a space. `var 1` is interpreted as two separate values, `var` and `1`. 
     - Certain words are reserved for R, and cannot be used as variable names. These include, but are not limited to, `if`, `else`, `while`, `function`, `for`, `in`, `next`, `break`, `TRUE`, `FALSE`, `NULL`, `Inf`, `NA`, and `NaN`
 
-Good names for variables are short, sweet, and easy to type while also being somewhat descriptive. For example, let's say you have an air pollution data set. A good name to assign the data set to would be `airPol` or `air_pol`, as these names tell us what is contained in the data set and are easy to type. A bad name for the data set would be `airPollution_NOx_O3_June20_1968`. While this name is much more descriptive than the previous names, it will take you a long time to type, and will become a bit of a nuisance when you have to type it 10+ times to refer to the data set in a single script. Please refer to the [*Style Guide*](http://adv-r.had.co.nz/Style.html) found in *Advanced R* by H. Wickham for more information. 
+Good names for variables are short, sweet, and easy to type while also being somewhat descriptive. For example, let's say we have an air pollution data set. A good name to assign the data set to would be `airPol` or `air_pol`, as these names tell us what is contained in the data set and are easy to type. A bad name for the data set would be `airPollution_NOx_O3_June20_1968`. While this name is much more descriptive than the previous names, it will take us a long time to type, and will become a bit of a nuisance when you have to type it 10+ times to refer to the data set in a single script. Please refer to the [*Style Guide*](http://adv-r.had.co.nz/Style.html) found in *Advanced R* by H. Wickham for more information. 
 
-Lastly, R evaluates code from top-to-bottom of your script. So if you reference a variable it must have already been created at an earlier point in your script. For example:
+Lastly, R evaluates code from top-to-bottom of your script. So if we reference a variable it must have already been created at an earlier point in your script. For example:
 
 ```{r, error = TRUE}
 y + 1
@@ -49,32 +98,30 @@ y <- 12
 
 ```
 
-The code above returns the `object 'y' not found` error because we're adding `+ 1` to `y` which hasn't been created yet, it's created on the next line. These errors also pop up when you edit your code without clearing your workplace. All variables created in a session are stored in the working environment so you can call them, even if you change your code. This means you can accidentally reference a variable that isn't reproduced in the latest iteration of your code. Consequently, a good practice is to frequently clear your work-space suing the 'broom' button in the *environment* pane. This will help you to ensure the code you're writing will is organized in the correct order; see [Saving R scripts] for why this is important. 
+The code above returns the `object 'y' not found` error because we're adding `+ 1` to `y` which hasn't been created yet, it's created on the next line. These errors also pop up when we edit our code without clearing our workspace. All variables created while RStudio is open are stored in the "working environment" so we can call them later, even if we change our code. This means we can accidentally reference a variable that isn't reproduced in the latest iteration of our code. Consequently, a good practice is to frequently clear our work-space using the 'broom' button in the **Environment** pane. This will help us to ensure the code you're writing will be organized in the correct order; see [Saving R scripts] for why this is important. 
 
 ## Data Types
 
-Data types refer to how data is stored and handled by and in R. You can really get into the weeds on this, but we'll focus on the most common types so you can get started on your work. Firstly, here are the data types you'll likely be working with:
+Data types refer to how data is stored and handled by and in R. This can get complicated quickly, but we'll focus on the most common types here so we can get straight to the fun stuff. Firstly, here are the data types you'll likely be working with:
 
-  - **character**: `"a"`, `"howdy"`, `"1"`, is used to represent string values in R. Basically it's text that you'd read. Note the quotation marks and the fact that `"1"`, despite being a number, is stored as a character.
-  - **numeric** (real or decimal): `2`, `3.14`, `6.022e23`.
-  - **integer**: `2L`, note the 'L' tells R this is an integer. 
-  - **logical**: either `TRUE` or `FALSE` 
+  - **character**: This data type is used for text, such as `"a"`, `"howdy"`, or `"1"`. Anything wrapped in quotation marks will be treated as a "string" of characters, including numbers. 
+  - **numeric**: Any real or decimal number, such as `2`, `3.14`, or `6.022e23`.
+  - **logical**: Boolean logic values `TRUE` and `FALSE`.
   
-There are some helpful functions to test the data type of a value in R as a frequent source of error and frustration are values stored in the wrong data type.  
+Importing data into R can sometimes result in numeric values being converted into characters (or something even less helpful), so let's look at some helpful functions to test the data type of a value in R. 
 
 ```{r, error = TRUE}
 x <- "6"
 x / 2
 ```
-You'll see the error above frequently, and it's simply saying you're trying to do math on something you can't do math on. You might think if `x` is 6, why can't I divide it by 2? Let's see what type of data `x` is: 
+It's common to run into the error above, which simply states that we're trying to do math on something we can't do math on. You might think if `x` is 6, why can't I divide it by 2? Let's see what type of data `x` is by using some common data type testing functions: 
 
 ```{r}
-is.numeric(x)   # test if numeric 
-is.logical(x)   # test if logical
-is.integer(x)   # test if integer 
-is.character(x) # test if character
+is.numeric(x)   
+is.logical(x)   
+is.character(x) 
 ```
-So the value of `x` is a character, in other words R treats it as a word, and we can't do math on that (think, how would you divide a word by a number?). So let's convert the data type of `x` to numeric to proceed. 
+So the value of `x` is a character, in other words R treats it as a word, and we can't do math on that (think, how would you divide a word by a number?). So let's convert the data type of `x` to numeric using the `as.numeric()` function. This lets us finally perform math operations on `x`. Again, note that the assignment operator `<-` does not print anything to the console. This is why there are 5 lines of input code below but only 4 lines of console output.
 
 ```{r}
 x 
@@ -84,52 +131,60 @@ x
 x / 2
 ```
 
-So we've converted our character string `"6"` to the numerical value `6`. Keep in mind there are other conversion functions which are described [elsewhere](https://www.geeksforgeeks.org/conversion-functions-in-r-programming/), but you can't always convert types. In the above example we could convert a character to numeric because it was ultimately a number, but we couldn't do the same if the value of `x` was `"six"`. 
+So we've converted our character string `"6"` to the numerical value `6`. Keep in mind there are other conversion functions which are described [elsewhere](https://www.geeksforgeeks.org/conversion-functions-in-r-programming/), but we can't always convert types. In the above example we could convert a character to numeric because it was ultimately a number, but we couldn't do the same if the value of `x` was `"six"`. 
+```{r, error = TRUE}
+x <-"six"
+x <- as.numeric(x)
+x
+
+```
+This error message means that R didn't know how to convert "six" to a numeric value, so it instead turned it into an *NA*, representing a missing value. 
+
   
 ## Data Structures
 
-Data structures refers to how R stores data. Again, it's easy to get lost in the weeds here so we'll focus on the most common and useful data types for your work which will overwhelmingly be data frames. Data frames consist of data stored in rows and columns. If you've ever worked with a spreadsheet (i.e. *Excel*), it's essentially that with the caveat that *all data stored in a column must be of the same type*. Again, different columns can have different data types, but *within* a column all the data needs to be the same type. R will convert your data otherwise to make it all the same. A common error is a single character in a column of numerical values leading to the entire column to be interpreted as character values; similar to what we discussed above. Errors like this most often stem from mistakes in recording and importing your data so be careful!
+Data structures refers to how R stores data. Again, it's easy to get lost in the weeds here so we'll focus on the most common and useful data type for your work which will overwhelmingly be **data frames**. 
 
-From the `R4EnvChem-ProjectTemplate`, let's import some real data as follows by typing the following into the console: 
+Data frames consist of data stored in rows and columns, just like in Excel. The most important rule of data frames is that *all data stored in a column must be of the same type*. Different columns can have different data types, but *within* a column all the data needs to be the same type. If this is not true in the data file being imported, R will convert your data to force each column to contain only one data type. A common error is a single character in a column of numerical values leading to the entire column to be interpreted as character values; similar to what we discussed above. Errors like this most often stem from mistakes in recording and importing your data so be careful!
+
+As an example, let's import some real data from `R4EnvChem-ProjectTemplate` (which you should have downloaded in Chapter 2.2) by typing the following into the console: 
 
 ```{r}
-# Install and open tidyverse if you haven't already 
-# install.packages("tidyverse")
-# library(tidyverse)
-
 airPol <- read_csv("data/2018-01-01_60430_Toronto_ON.csv")
 
 ```
-
-The above is air quality data measured in downtown Toronto around January 2018. The `Column specification` are a useful feature of `read_csv()` and tells us what data type each column stores. Some of the variables are:
+`read_csv()` is a useful function which, as you might guess from its name, can read an input csv file and convert it into a data frame. The csv file we just imported contains air quality data measured in downtown Toronto around January 2018. The `Column specification` summary printed to the console is a useful feature of `read_csv()` which tells us what data type was determined for each column when it was imported. Note that *double* is simply another term for the *numeric* data type. Some of the variables are:
 
   - `naps`, `city`, `p`, `latitude`, `longitude` to tell you where the data was measured. 
-  - `data.time` for when the measurements were taking. 
+  - `dat.time` for when the measurements were taken. 
   - `pollutant` for the chemical measured
   - `concentration` for the measured concentration in parts-per-million (ppm). 
 
 
-You'll note that we've assigned it to the variable: `airPol`. This is so we can referece it and make use of it later on (see below). If we didn't do this our data would simply be printed to the console which isn't helpful for us. Let's take a look at the data itself: 
+We've assigned this data frame to the variable: `airPol`. This is so we can reference it and make use of it later on (see below). If we didn't do this our data would simply be printed to the console which isn't helpful for us. Let's take a look at the data itself: 
 
 ```{r}
-# a variable by itself will return it's contents
 airPol
 ```
 
 
-Here we see that the data is stored **tidy**, which is to say each column is a variable and each row is an observation. So reading the first row, we know that the Toronto 60430 station on 2018-07-01 at midnight measured ambient O~3~ concentrations of 46 ppm (Note the concentration column isn't printed due to width). The concept of tidy data is important and is integral to working in R. It's discussed further in [Tidying your data]. Lastly, R will only output a small chunk of our data for us to see. If you'd like to see it in full, go the the `Environment` pane and double click on the `airPol` data. 
+Here we see that the data we imported was already organized in **tidy** format, which is to say each column is a variable and each row is an observation. So reading the first row, we know that the Toronto 60430 station on 2018-07-01 at midnight measured ambient O~3~ concentrations of 46 ppm (Note the concentration column isn't printed due to width). The concept of tidy data is important and is integral to working in R. It's discussed further in [Tidying your data]. Lastly, R will only output a small chunk of our data for us to see. If you'd like to see it in full, go the the `Environment` pane and double click on the `airPol` data. Alternately, you can use the `View()` function in the console.
+
+```{r}
+View(airPol)
+```
 
 ### Accessing data in subfolders
 
 Note that `read_csv()` requires us to specify the file name, but in the above example we prefixed our file name with `"data/2018..."`. This is because the `.csv` file we want to open is stored in the `data` sub-folder. By specifying this in the prefix, we tell `read_csv()` to first go to the `data` sub folder in the working directory and *then* search for and open the specified data file. 
 
 What we've done above is called *relative referencing* and it's a huge benefit of projects. The actual data file is stored somewhere on your computer in a folder like `"C:/User/Your_name/Documents/School/Undergrad/Second_Year/R4EnvChemTemplate/data/2018-01-01_60430_Toronto_ON.csv"`. If we weren't in a project, this is what you'd need to type to open your file, but since we're working in the project, R assumes the long part, and begins searching for files inside the project folder. Hence, why we only need `"data/2018..."`. Not only is this much simpler to type, and but it makes sharing your work with colleagues, TAs, and Profs (and yourself!) much easier. In other words, if you wanted to share your code, you would send the entire project folder (code & data) and the receiver could open it and run it as is. 
+<!--
+## Vectors and Lists
 
-## Other data structures
+R has other data structures which aren't as frequently used, but it's worth being aware of their existence as we might refer to these in later chapters.
 
-R has several other data structures. They aren't as frequently used, but it's worth being aware of their existence. Other structures include: 
-
-  - **Vectors** contain multiple elements *of the same type*; either numeric, character (text), logical, or integer. Vectors are created using `c()`, which is short for combine. A data frame is just multiple vectors arranged into columns. Some examples of vectors are shown below. 
+  - **Vectors** contain multiple elements *of the same type*; either numeric, character (text), or logical. Vectors are created using `c()`, which is short for "combine". A data frame is just multiple vectors arranged into columns. Some examples of vectors are shown below. 
 
 ```{r}
 num <- c(1, 2, 3, 4, 5)
@@ -138,20 +193,19 @@ num
 char <- c("blue", "green", "red")
 char
 
-log <- c(T, T, T, F, F, F)
+log <- c(TRUE, TRUE, TRUE, FALSE, FALSE, FALSE)
 log
 ```
-  - **Lists** are similar to vectors in that they are one dimensional data structures which contain multiple elements. However, lists can contain multiple elements of different types, while vectors only contain a single type of data. You can create lists using `list()`. Some examples of lists are shown below. You can use `str()` to reveal the different components of a list, in a more detailed format than if you were to simply type the assigned name of the list.
+  - **Lists** are similar to vectors in that they are data structures which contain multiple elements. However, lists can contain multiple elements of different types, while vectors only contain a single type of data. We can create lists using `list()`. For example: 
 
 ```{r}
-hi <- list("Hello", c(5,10,15,20), c(T, T, F))
-str(hi)
+hi <- list("Hello", c(5, 10, 15, 20), c(TRUE, TRUE, FALSE))
 hi
 ```
-
-There are many freely available resources online which dive more in depth into different data structures in R. If you are interested in learning more about different structures, you can check out the  [*Data structure*](http://adv-r.had.co.nz/Data-structures.html) chapter of *Advanced R* by Hadley Wickham.
-
-## R packages and functions
+Again, you don't need to worry too much about these right now, but if you are interested in learning more about more advanced data structures, you can check out the  [*Data structure*](http://adv-r.had.co.nz/Data-structures.html) chapter of *Advanced R* by Hadley Wickham.
+-->
+<!--Considering this info won't come up for quite some time, probably best to move it later, or just provide a link for more info...-->
+## R Functions
 
 Functions are bits of code written to execute a specific task. We've already used several functions such as `library()` to import packages, and `read_csv()` to read the air quality data as seen in [Data Structures] above. Functions offer a convenient means to reduce the amount of typing while making code more reliable and readable. Some of these functions are built into R, such as `library()`, but often people write new functions to improve upon base R to help it meet the needs of it's users, such as the `read_csv()`. A collection of functions for a similar tasks is stored in a package, such as the `tidyverse` suite of packages which contains functions for plotting (`ggplot2`), reading data `read_csv()` and more. 
 
@@ -159,7 +213,7 @@ Let's take a look at one of the functions you'll be using the most: `ggplot` fro
 
 ### ggplot2 
 
-`ggplot` allows you to create a variety of visualizations to explore and communicate your data and results. Like every function, `ggplot` has required *arguments*, i.e. data and instructions you pass to the function. The required arguments for this function are the *data* to be plotted and the aesthetic *mappings* for how the plot should look. Using our loaded air quality data from above, you can copy and paste the following code in the console: 
+`ggplot` allows us to create a variety of visualizations to explore and communicate our data and results. Like every function, `ggplot` has required *arguments*, i.e. data and instructions you pass to the function. The required arguments for this function are the *data* to be plotted and the *aesthetic mappings* for how the plot should look. Using our loaded air quality data from above, you can copy and paste the following code in the console: 
 
 
 ```{r, message = FALSE, warning = FALSE}
@@ -172,16 +226,18 @@ ggplot(data = airPol,
 
 ```
 
-Breaking this down: 
+As is common practice with more complicated functions, we've split the function call up over multiple lines to improve readability. Unlike in some other coding languages, R does not care about line breaks, so this will not affect how the function runs.
 
-  - We're calling `ggplot()` in the first line and passing the arguments inside the parentheses
+Let's break down the code above: 
+
+  - We're calling `ggplot()` in the first line and passing the arguments `data` and `aes` inside the parentheses
   - We're specifying that we want to plot the loaded air pollution data with `data = airPol`
   - We insert a `,` to separate each argument
   - We specified the *aesthetics* (`aes()`) arguments: 
-    - `x = data.time` means our x-axis will be the data in the `data.time` column.
-    - `y = concentration` means our y-axis will be the data in the `concentration` column.
-    - `colour = pollutant` means we colour each point based on `pollutant` column. 
-  - We add a `+` on the second last line of code as this so we can *add* components to `ggplot()`
+    - `x = data.time` means our x-axis will be the data in the `data.time` column of `airPol`.
+    - `y = concentration` means our y-axis will be the data in the `concentration` column of `airPol`.
+    - `colour = pollutant` means we colour each point based on the value of the `pollutant` column of `airPol`. 
+  - We add a `+` on the second last line of code as this so we can *add* components to `ggplot()`. This is a convention which is unique to `ggplot()`.
   - And finally we add `geom_point()` to specify what type of plot we want; in this case it's a scatter plot. 
     - `geoms` are layers that combine data, aesthetic mappings, and other data to create a plot. 
     - There are other many other geoms. Go ahead and try `geom_line()`. For more examples see [Visualizations] in Section 3. 
@@ -213,29 +269,51 @@ This plot looks more complicated then the previous one, but it's the same data p
   - Made some final aesthetic changes using `theme()`
     - specifically we removed the legend using `legend.position = "none"`. 
 
-This covers the basics of `ggplot()` but there's scores more you can do with this functions, and it's extended even further with packages. All of this is discussed in more detail in the [Visualizations] chapter. 
+This covers the basics of `ggplot()` but there's a ton more you can do with this function, and it can be extended even further with other packages. All of this is discussed in more detail in the [Visualizations] chapter. 
 
 ### Calling specific functions
 
-We've called functions like `ggplot()` and `read_csv` from the `ggplot2` and `readr` packages, respectively, because they were implicitly imported when we called `library(tidyverse)`. What library does is import *all* of the functions within a package into the R workspace, so we can simply refer to them by name later on. Sometimes you'll want to be explicit with which function you call, as you can run into conflicts where different functions from different packages have the same name. Or you might not want to import the entire package when you only need to call one function. Either way, to explicitly call a function from a specific package you type the package name, followed by `::`, and the function name. I.e. We can use `read_csv` without importing the `tidyverse`/`readr` packages by simply typing: `readr::read_csv()`. Note the package still needs to be installed on your computer for this to work. 
+We've called functions like `ggplot()` and `read_csv` from the `ggplot2` and `readr` packages, respectively, because they were implicitly imported when we called `library(tidyverse)`. What this does is import *all* of the functions within a package into the R workspace, so we can simply refer to them by name later on. Sometimes you'll want to be explicit with which function you call, as you can run into conflicts where different functions from different packages have the same name. Or you might not want to import the entire package when you only need to call one function. Either way, to explicitly call a function from a specific package we type the package name, followed by `::`, and the function name. I.e. We can use `read_csv` without importing the `tidyverse`/`readr` packages by simply typing: `readr::read_csv()`. Note the package still needs to be installed on your computer for this to work. 
 
 ### Function Documentation
 
-An oft unappreciated aspect of packages is that they not only contain functions we can use, but documentation. Documentation provides a description of the function (what it does), what arguments it takes, details, and working examples.Often the easiest way to learn how to use a function is to take a working example and change it bit by bit to see how it works etc. To see documentation check the "help" tab in the "outputs" window or type a question mark in front of a functions name: 
+An oft unappreciated aspect of packages is that they not only contain functions we can use, but documentation. Documentation provides a description of the function (what it does), what arguments it takes, details, and working examples. Often the easiest way to learn how to use a function is to take a working example and change it bit by bit to see how it works etc. To see documentation check the "help" tab in the "outputs" window or type a question mark in front of a functions name: 
 
 ```{r, eval = FALSE}
-# Takes you to the help document for the ggplot function
 ?ggplot
 ```
-You can also write you're own functions. Please see [Programming with R] for additional details. 
+You can also write your own functions. Please see [Programming with R] for additional details. 
+
+
+## Exporting Results
+
+In some cases, your code may be used to generate large data structures which require quite a bit of input to create. It can be quite tedious to re-run the code used to generate these large data sets every time you open RStudio, and you might find yourself wanting to save the data structure to a *real* file that you can simply import the next time you open the application. Most often this will be an intermediate step of your data analysis in the form of a data frame. To save a data frame as a `.csv` file, we can use `write.csv()`. 
+
+
+```{r, eval = FALSE}
+airPol <- read_csv("data/2018-01-01_60430_Toronto_ON.csv")
+airPol_fancy <- airPol
+write.csv(x = airPol_fancy, file = "data/testData.csv")
+```
+
+Breaking it down: 
+
+  - We imported our air quality data and stored it in `airPol`. 
+  - We performed an incredibly complex series of advanced data sorting steps (here represented by creating the `airPol_fancy` variable) and now want to save the resulting table for later. 
+  - We called `write.csv()`, wherein:
+    - `x = airPol_fancy` specified we want to save the data.frame `airPol_fancy`
+    - `file = "data/testData.csv"` specified *where* we want the file to be saved (in the *data* sub-directory), and *what* our new file will be called (*testData.csv*). It's important to specify the file extension so R knows how to save it. 
+
+
   
 ## Summary
 
 In this chapter we've covered: 
 
-  - The basics of coding in R including variables, data types, and data structures (notable `data.frames`).
+  - The basics of coding in R including variables, data types, and data structures (notably `data.frames`).
   - How to install r packages and make use of functions
   - Importing data from your project folder into R
   - Preliminary exploration of `ggplot2` to visualize the aforementioned data. 
+  - Exporting data for later use
 
-Now that you're familiar with navigating RStudio and some basic coding building blocks, you may have realized that working the console can get real messy, real quick. Well read on to the next chapter where we'll discuss R workflows to make everyone's lives easier. 
+Now that you're familiar with navigating RStudio and some basic coding building blocks, you may have realized that working the console can get real messy, real quick. Well read on to the next chapter, where we'll discuss how to use scripts to make our lives easier. 

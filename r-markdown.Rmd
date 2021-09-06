@@ -1,6 +1,6 @@
 # Using R Markdown
  
-In a nutshell, R Markdown allows you to analyse your data with R and write your report in the same place (this entire book was written with rmarkdown). This has loads of benefits including a [*reproducible workflow*](https://www.youtube.com/watch?v=s3JldKoA0zw), and streamlined thinking. No more flipping back and forth between coding and writing to figure out what's going on.
+In a nutshell, R Markdown allows us to analyse our data with R and write a report in the same place (this entire book was written with rmarkdown). This has loads of benefits including a [*reproducible workflow*](https://www.youtube.com/watch?v=s3JldKoA0zw), and streamlined thinking. No more flipping back and forth between coding and writing to figure out what's going on.
 
 Let's run some simple code as an example: 
 
@@ -10,7 +10,7 @@ x <- 2+2
 x
 ```
 
-What we've done here is write a snippet of R code, ran it, and printed the results (as they would appear in the console). While the above code isn't anything special, we can extend this concept so that our R markdown document contains any data, figures or plots we generate throughout our analysis in R. For example: 
+What we've done here is write a snippet of R code, run it, and print the results (as they would appear in the console). While the above code isn't anything special, we can extend this concept so that our R markdown document contains any data, figures or plots we generate throughout our analysis in R. For example (don't worry about the specific functions here, they'll be covered in later chapters): 
 
 ```{r, message = FALSE, fig.cap= "Time series of 2018 ambient atmospheric O~3~, NO~2~, and SO~2~ concentrations (ppb) in downtown Toronto", fig.height=2}
 library(tidyverse) 
@@ -40,7 +40,7 @@ Pretty neat, eh? You might not think so, but let's imagine a scenario you'll enc
 
 ## Getting started with rmarkdown
 
-As you've already guessed, R markdown documents use R and are most easily written and assembled in the R Studio IDE. If you have not done so, revisit Chapter 1:[Installing R]. Once setup with R and R Studio, you'll need to install the `rmarkdown` and `tinytex` packages. In the console, simply run the following code:
+As you've already guessed, R markdown documents use R and are most easily written and assembled in R Studio. If you have not done so, revisit Chapter 1:[Installing R]. Once setup with R and R Studio, you'll need to install the `rmarkdown` and `tinytex` packages. In the console, simply run the following code:
 
 ```{r, eval = FALSE}
 # These are large packages so it'll take a couple of minutes to install
@@ -51,14 +51,14 @@ install.packages("tinytex")
 tinytex::install_tinytex()  # install TinyTeX
 
 ```
+<!--Do rmarkdown and tinytex need to be loaded by library()? Or is just installing them enough?-->
+The `rmarkdown` package is what we'll use to generate our documents, and the `tinytex` package lets us export them as PDFs. There's a lot more going on behind the [scenes](https://rmarkdown.rstudio.com/lesson-2.html), but you shouldn't need to worry about it. 
 
-The `rmarkdown` package is what we'll use to generate our documents, and the `tinytex` package enables compiling documents as PDFs. There's a lot more going on behind the [scenes](https://rmarkdown.rstudio.com/lesson-2.html), but you shouldn't need to worry about it. 
-
-Now that everything is setup, you can create your first R Markdown document by opening up R Studio, selecting `FILE -> NEW FILE -> Rmarkdown`. A dialog box will appear asking for some basic input parameters for your R markdown document. Add your title and select PDF as your default output format (you can always change these later if you want). A new file should appear that's already populated with some basic script illustrating the key components of an R markdown document. 
+Now that everything is setup, we can create our first R Markdown document by opening up R Studio, selecting `FILE -> NEW FILE -> Rmarkdown`. A dialog box will appear asking for some basic input parameters for your R markdown document. Add your title and select PDF as your default output format (you can always change these later if you want). A new file should appear that's already populated with some basic script illustrating the key components of an R markdown document. 
 
 ### Understanding rmarkdown
 
-Your first reaction when you opened your newly created R markdown document is probably that it doesn't look anything at all like something you'd show your prof. You're right, what you're seeing is the plain text code which needs to be compiled (called *knit* in R Studio) to create the final document. When you create a R markdown document like this in R Studio a bunch of example code is already written. You can compile this document (see below) to see what it looks like, but let's break down the primary components. At the top of the document you'll see something that looks like this:
+Your first reaction when you opened your newly created R markdown document is probably that it doesn't look anything at all like something you'd show your prof. You're right, what we're seeing is the plain text code which needs to be compiled (called *knit* in R Studio) to create the final document. When we create a R markdown document like this in R Studio a bunch of example code is already written. We can compile this document (see below) to see what it looks like, but let's break down the primary components. At the top of the document you might see something that looks like this:
 
 ```{r, eval = FALSE}
 ---
@@ -69,36 +69,65 @@ output: pdf_document
 ---
 ```
 
-This section is known as the *preamble* and it's where you specify most of the document parameters. In the example we can see that the document title is ["Temporal Analysis of Foot Impacts While Birling Down the White Water"](https://www.youtube.com/watch?v=upsZZ2s3xv8), it's written by Jean Guy Rubberboots, on the 24th of June, and the default output is a PDF document. You can modify the preamble to suit your needs. For example, if you wanted to change the title you would write `title: "Your Title Here"` in the preamble. Note that none of this is `R` code, rather it's `YAML`, the syntax for the document's metadata. Apart from what's shown you shouldn't need to worry about this much, just remember that indentation in [YAML matters](https://bookdown.org/yihui/rmarkdown/pdf-document.html). 
+This section is known as the *preamble* and it's where you specify most of the document parameters. In the example we can see that the document title is ["Temporal Analysis of Foot Impacts While Birling Down the White Water"](https://www.youtube.com/watch?v=upsZZ2s3xv8), it's written by Jean Guy Rubberboots, on the 24th of June, and the default output is a PDF document. You can modify the preamble to suit your needs. For example, if you wanted to change the title you would write `title: "Your Title Here"` in the preamble. Note that none of this is `R` code, rather it's `YAML`, the syntax for the document's metadata. Apart from what's shown you shouldn't need to worry about this much, just remember that indentation in YAML [matters](https://bookdown.org/yihui/rmarkdown/pdf-document.html). 
 
-Reading further down the default R markdown code, you'll see different blocks of text. In R markdown anything you write will be interpreted as body text (i.e. stuff like this that you want folks to read) in the knitted document. **To actually run R code** you'll need to see the next section.
+Reading further down the default R markdown code, we can see different pre-generated blocks of text. Most of this is just examples of simple formatting and can be deleted when you're ready to add your own content. In R markdown most of what we write will be interpreted as body text (i.e. stuff that you want folks to read) in the knitted document. **To actually run R code** as part of your document, see below.
 
 ### Running code in rmarkdown
 
-There's two ways to write `R` code in markdown:
+There are two ways to write `R` code in markdown:
 
 - **Setup a code chunk**. Code chunks start with three back-ticks like this: ` ```{r}`, where `r` indicates you're using the R language You end a code chunk using three more backticks like this ` ``` `.
 
-  - Specify code chunks options in the curly braces. i.e. ` ```{r, fig.height = 2}` sets figure height to 2 inches. See the *Code Chunk Options* section below for more details. 
+  - You can add formatting options inside the curly braces. For example, ` ```{r, fig.height = 2}` sets figure height to 2 inches. The following code tells markdown you're running code written in `R`, that when you compile your document this code chunk should be evaluated, and that the resulting figure should have the caption "Some Caption". 
+
+```markdown
+`r '```{r, eval = FALSE, fig.cap = "Some caption"}
+
+# some code to generate a plot worth captioning. 
+
+'```
+```
+
+See the *R Markdown Formatting* section below for more details. 
   
-- **Inline code expression**, which starts with  `` `r ``  and ends with `` ` `` in the body text.
+- **Inline code expression**, which starts with  `` `r ``  and ends with `` ` `` in the body text on the same line.
 
-  - Earlier we calculated `x <- 2 + 2`, we can use inline expressions to recall that value (ex. We found that *x* is `r x`)
- 
- A screenshot of how this document, the one you're reading, appeared in R Studio is shown in the image below.   
+  - Earlier we calculated `x <- 2 + 2`, we can use inline expressions to recall that value. Writing the following in markdown:
+    
+```markdown
+`r 'We found that x is `r x` 
+```
+will produce the following in the compiled document: 
+
+We found that x is `r x`
+
+
+A screenshot of how this document, the one you're reading, appeared in R Studio is shown in the image below.   
   
-**To actually run** your R code you have two options. The first is to run the individual chunks using the *Run current chunk* button (See figure 2). This is a great way to tinker with your code before you compile your document. The second option is to compile your entire document using the *Knit document* button (see Figure 2). Knitting will sequentially run all of your code chunks, generate all the text, knit the two together and output a PDF. You'll basically save this for the end. 
+Individual code chunks can be run using the *Run current chunk* button (See figure 2). This is a great way to tinker with your code before you compile your document. See Chapter 5.1.3 for instructions on compiling.
 
-**Note all the code chunks in a single markdown document work together like a normal R script.** That is if you assign a value to a variable in the first chunk, you can call this variable in the second chunk; the same applies for libraries. **Also note that every time you compile a markdown document, it's done in a "fresh" R session.** If you're calling a variable that exist in your working environment, but isn't explicitly created in the markdown document you'll get an error.   
+The second option is to compile your entire document using the *Knit document* button, shown in the figure below. See [Compiling your report] for more details. 
+
+**Note: all the code chunks in a single markdown document work together like a normal R script.** That is if we assign a value to a variable in the first chunk, we can call this variable in the second chunk; the same applies for libraries. **Also note that every time you compile a markdown document, it's done in a "fresh" R session.** If you're calling a variable that exist in your working environment, but isn't explicitly created in the markdown document you'll get an error.   
 
   
-![How this document, the one you're reading, appeared in RStudio; to see the final results scroll up to Figure 1. Note the "knit" and "run current chunk" buttons. ](images/exampleRMarkdown.PNG)
+![How this document, the one you're reading, appeared in RStudio; to see the final results scroll up to the line plot at the start of this chapter. Note the "knit" and "run current chunk" buttons. ](images/exampleRMarkdown.PNG)
 
-### Generating final report
+### Compiling your report
 
-To create a PDF to hand in you'll need to compile, or knit, your entire markdown document as mentioned above. To knit (or compile) your R markdown script, simply click the  *knit* button in R Studio (yellow box, Figure 2). You can specify what output you would like and R Studio will (hopefully) compile your script. 
+To create a PDF ready to hand in we'll need to compile, or knit, our entire markdown document as mentioned above. To knit (or compile) our R markdown script, simply click the  *knit* button in R Studio (yellow box, Figure 2). You can specify what output you would like and R Studio will (hopefully) compile the script. Knitting will sequentially run all of your code chunks, generate all the text, knit the two together and output a PDF. This can take some time, depending on how much code there is to run, so it's best to save this until you're finished preparing the document. 
 
-If you want to test how your code chunks will run, R Studio shows a little green 'play button' on the top right of every code chunk. this is the 'run current chunk' button, and clicking it will run your code chunk and output whatever it would in the final R markdown document. This is a great way to tweak figures and codes as it avoids the need to compile the entire document to check if you managed to change the lines from 'black' to 'blue' in your plot. 
+
+You'll most likely be exporting your rmarkdown documents as PDFs, but the beauty of rmarkdown is it doesn't stop there. Your rmarkdown documents can be knitted as a HTML document, a book, or even an HTML book like the one you're reading now!. You can also make slideshow presentations and yes, if need be, export as a word document that you can open in *Microsoft Word*.
+
+Here are some links to help you in exporting your document to common formats:
+
+  - [`pdf_document`](https://bookdown.org/yihui/rmarkdown/pdf-document.html) creates a PDF document via Latex; probably your best default option. 
+  - [`word_document`](https://bookdown.org/yihui/rmarkdown/word-document.html) creates a Word document. Note that the formatting options are pretty basic, so while evereything will be where you want it to be, you'll need to pretty it up in Word to comply with your instructors specifications. 
+  - [`tufte_handout`](https://bookdown.org/yihui/rmarkdown/tufte-handouts.html) for a PDF handout in the style of Edward Tufte. Check it out. 
+  - [`ioslides_presentation`](https://bookdown.org/yihui/rmarkdown/ioslides-presentation.html), [`revealjs::revealjs_presentation`](https://bookdown.org/yihui/rmarkdown/ioslides-presentation.html), and [`powerpoint_presentation`](https://bookdown.org/yihui/rmarkdown/powerpoint-presentation.html) are all options to create sldieshow presentations. I personally use `revealjs` for my own work. It has the steepest learning curve of the bunch, but once setup, you can make incredibly slick slides with ease. 
+    - Note: like `word_document`, `powerpoint_presentation`'s outputs are stylistically simple. You'll definitly need to pretty them up manually in Powerpoint.
 
 ## So now what do I do with R Markdown? 
 
@@ -114,17 +143,21 @@ There's a plethora of helpful online resources to help hone your R markdown skil
 - *[The R markdown cheat sheet](https://rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf)*, a great resource with the most common R markdown operations; keep on hand for quick referencing. 
 - *[Bookdown: Authoring Books and Technical Documents with R Markdown](https://bookdown.org/yihui/bookdown/)* (2020) by Yihui Xie. Explains the `bookdown` package which greatly expands the capabilities of R markdown. For example, the table of contents of this document is created with `bookdown`. 
 
-### R code chunk options
+## Summary
 
-Your R code is run in chunks and the results will be embedded in the final output file. To each chunk you can specify options that'll effect how you're code chunk is run and displayed in the final output document. You include options in the chunk delimiters ` ```{r}` and ` ``` `. For example the following code tells markdown you're running code written in `R`, that when you compile your document this code chunk should be evaluated, and that the resulting figure should have the caption "Some Caption". 
+In this chapter we've covered:
 
-````markdown
-`r ''````{r, eval = FALSE, fig.cap = "Some caption"}
+  - Why you should be using R Markdown instead of Microsoft Word to write your lab reports from now on
+  - How to create and compile R Markdown files
+  - Running code within R Markdown
 
-# some code to generate a plot worth captioning. 
+Below we've provided a summary of some basic formatting options for those who want them, but if you're not interested right now, then feel free to skip to Chapter 6 for a quick exercise that should help solidify all the concepts covered in Section 1.
 
-```
-````
+
+## R Markdown formatting (Optional)
+
+Your R code is run in chunks and the results will be embedded in the final output file. To each chunk you can specify options that'll effect how you're code chunk is run and displayed in the final output document. You include options in the chunk delimiters ` ```{r}` and ` ``` `. 
+
 The most common and useful chunk options are shown below. Note that they all have a default value. For example, `eval` tells R markdown whether the code within the block should be run. It's default option is  `TRUE`, so by default any code in a chunk will be run when you knit your document. If you don't want that code to be run, but still displayed, you would set `eval = FALSE`. Another example would be setting `echo = FALSE` which allows the code to run, but the code *won't* be displayed on the output document (the outputs will still be displayed though); useful for creating clean documents with plots only (i.e. lab reports...). 
 
 
@@ -187,19 +220,9 @@ Unlike *Microsoft Word*, RMarkdown utilizes a specific syntax for text formattin
 
 For a collection of other RMarkdown syntax, please see the useful (and brief) list compiled online [here](https://rmarkdown.rstudio.com/authoring_basics.html). This includes ordered and unordered lists, headers, code blocks, hyperlinks, and figure captions. 
 
-## Exporting Rmarkdown documents
+  
 
-You'll most likely be exporting your rmarkdown documents as PDFs, but the beauty of rmarkdown is it dosen't stop there. Your rmarkdown documents can be knitted as a HTML document, a book (or both like this book!). You can even make slideshow presentations and yes, if need be, export as a word document that you can open in *Microsoft Word*.
-
-Here are some links to help you in exporting your document to common formats:
-
-  - [`pdf_document`](https://bookdown.org/yihui/rmarkdown/pdf-document.html) creates a PDF document via Latex; probably your defacto output. 
-  - [`word_document`](https://bookdown.org/yihui/rmarkdown/word-document.html) creates a Word document. Note that the formatting options are pretty basic, so while evereything will be where you want it to be, you'll need to pretty it up in Word to comply with your instructors specifications. 
-  - [`tufte_handout`](https://bookdown.org/yihui/rmarkdown/tufte-handouts.html) for a PDF handout in the style of Edward Tufte. Check it out. 
-  - [`ioslides_presentation`](https://bookdown.org/yihui/rmarkdown/ioslides-presentation.html), [`revealjs::revealjs_presentation`](https://bookdown.org/yihui/rmarkdown/ioslides-presentation.html), and [`powerpoint_presentation`](https://bookdown.org/yihui/rmarkdown/powerpoint-presentation.html) are all options to create sldieshow presentations. I personally use `revealjs` for my own work. It has the steepest learning curve of the bunch, but once setup, you can make incredibly slick slides with ease. 
-    - Note: like `word_document`, `powerpoint_presentation`'s outputs are stylistically simple. You'll definitly need to pretty them up manually in Powerpoint.  
-
-## RStudio tips and tricks
+### RStudio tips and tricks
 
 To further the usefulness of rmarkdown, the latest release of RStudio has a *Visual R Markdown* editor which introduces many useful features for authoring documents in rmarkdown. Some of the most pertinent are: 
 

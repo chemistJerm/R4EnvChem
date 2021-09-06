@@ -1,102 +1,47 @@
-# Workflows for R coding
+# Working With Scripts
 
-In the previous chapter we did our coding in the console, which got messy rather quickly. To combat this, we code in *scripts*. Scripts are essentially a recipe that R reads to execute instead of you typing and running each line of code. And like a recipe, R reads your script from top to bottom. An important aspect of scripts is that *they're reproducible*. In other words you should be able to rerun your script and get the exact same result every time. 
+We've already mentioned the *environment* pane that displays objects present in your current R session. While they are useful to work with in the console, they're not *real*. That is to say, if we closed our R session, those objects would be lost. And while RStudio does allow us the option to save a working environment (and its associated objects) between sessions, it's best to always use a **Script**. 
 
-So let's go ahead and open a script.
+Scripts are essentially a recipe that R reads to execute instead of you typing and running each line of code. And like a recipe, R reads our script from top to bottom. An important aspect of scripts is that they're *reproducible*. In other words, we should be able to rerun our script and get the exact same result every time. 
+
+Essentially, relying solely on the working environment is like trying to memorize your lab experiment observations for later, while using scripts is like immediately writing those observations down in your lab notebook. I shouldn't have to tell you which method is more reliable.
+
 
 ## Creating or opening a script
 
 To create a script: 
 
-  1. Go to `File` -> `New File` -> `R Script`
-  2. Then save your script by going to `File` -> `Save As...`. 
+  1. Go to `File` -> `New File` -> `R Script`. This will open the Scripts pane above the console (see image below).
+  2. Then immediately save your new script by going to `File` -> `Save As...`. 
     a. Make sure to save your file with the `.R` suffix.
-    b. **Save your script in your project folder**, otherwise you'll run into issues.
+    b. **Save your script in your main project folder**, otherwise you'll run into issues.
+
+![Figure 2.6: Scripts window in RStudio.](images/Rstudio_scriptwindow.png){width=100%}
 
 We've also provided an example script in the R4EnvChem project template. Assuming you're currently in the template project you can open the script as follows:
 
-  1. Go to `File` -> `Open File` -> open the `Rscript-example.R` file. 
+  1. Go to `File` -> `Open File` -> open the `Rscript-example.R` file. Or, navigate to the `Files` tab of the Viewer pane and click the `Rscript-example.R` file to open it.
   
-To run code, highlight the lines you wish to run and click 'Run` at the top of the script. Selecting all of the script will run every line. 
- 
-## Workspace and what's real
+To run code, use your mouse to highlight the lines you wish to run and either click `Run` at the top of the script pane or press `Ctrl+Enter` (`Cmd+Enter` on Mac). Only the selected lines will be run. You'll see the lines appear in the console, followed by the output if there is any.
 
-We've already mentioned the *environment* pane that displays objects present in your R session. While they are useful to work with, they're not *real*. That is to say, if you closed your R session, those objects would be lost. And while RStudio allows you to save a working environment (and it's associated objects), it's best to embrace that *only your scripts are real*. You can't readily share your working environment, and even so it's bad practice as you may be reference a previous iteration of an object giving you erroneous results. Think back to the chemistry lab where although you may jot notes down on loose leaf, only what's written in your lab book is considered real... we'll that's how it's supposed to work anyways. 
-
-The idea is everything you need can be generated from the original data and the instructions in your script Anyone should be able to take your data and your code and get the same results you got. This is paramount for reproducibility of your work and your results. 
 
 ## Saving R scripts
 
-You can save an R script to a `.r` file by going to *File*->*Save* or by clicking the 'save' button in the top left of your script. Code saved to a `.r` file is considered *real*. Variables, plots, or data sets that only exist in your work-space (shown in the Environment window) are not. Whenever you close RStudio, any objects in R that are not considered *real* will be lost in that R session. Furthermore when you need to share your code (for school or publication) you'll need to share your data and your script, but never your work-space. This is to increase predictability and helps people (and you) to make sure your work is reproducible, an under appreciate hallmark of science. 
-
-### What should I save?
-
 At this point in the chapter, two things should be clear: 
 
-1. R scripts saved to `.R` files are real. 
-2. Objects in your work-space/environment are not real, and will not be available to you after you close and re-open RStudio unless you re-run the code used to generate the work-space. 
+1. Only R scripts saved to `.R` files are real. 
+2. Objects in the working environment are not real, and will not be readily available after you close and re-open RStudio.
 
-So what is important to save in R, and how often should you save these files? 
+So what is important to save in R, and how often should we save these files? 
 
-It is paramount that you save the scripts you code in, and that you save them regularly. Even if you've made small notation changes to the code, it is always a good idea to save your changes to the script before closing RStudio, as there is a good chance you will not remember the minor differences upon returning. You want to make sure that even if you lose an object in your environment, your script still contains the code you used to generate that object. You also want to make sure that you generate the object before you call it in part of another command, so that when you run your scripts from top-to-bottom, the variables are generated in the work-space before they are referenced by later commands. 
+It is paramount that we save the scripts you code in, and that we save them *regularly*. Even if we've made small notation changes to the code, it is always a good idea to save our changes to the script before closing RStudio, as there is a good chance you will not remember the minor differences upon returning. We want to make sure that even if we lose an object in our environment, our script still contains the code we used to generate that object. We also want to make sure that we generate the object before it gets called, so that when we run our scripts from top-to-bottom, the variables are generated in the working environment before they are referenced by later commands. 
 
-
-### Saving objects
-
-In some cases, your code may be used to generate large data structures which require quite a bit of input to create. It can be quite tedious to re-run the code used to generate these large data sets every time you open RStudio, and you might find yourself wanting to save the data structure to a *real* file that you can simply import the next time you open the application. Most often this will be an intermediate step of your data analysis in the form of a data frame. To save a data frame as a `.csv` file you use `write.csv()`. 
-
-
-```{r, eval = FALSE}
-# dummy data frame to save
-df <- data.frame(x = c(1,2,3),
-                 y = c("yes", "no", "maybe"))
-
-write.csv(x = df, 
-          file = "testData.csv")
-```
-
-Breaking it down: 
-
-  - we created a dummy data frame `df`
-  - we called `write.csv()` and
-    - `x = df` specifies we want to save the data.frame `df`
-    - `file = "data/testData.csv"` specifies *where* we want the file to save (in the *data* sub-directory, more later), and *what* our file will be called (*testData.csv*). It's important to specify the file extension so R knows how to save it. 
-
-<!-- I don't think we need to specify saving r objects other than data frames. I can't imagine a scenario where students would readily encounter this problem - DH --> 
-
-<!--
-
-The `save()` function saves the input object or objects (i.e., vector, matrix, or data frame) to your working directory as an `.rda` file. Let's try saving our vectors `x` and `y` from the previous examples to a file called `vec.rda`.
-
-```{r eval = FALSE}
-# save vectors
-save(x, y, file = "vec.rda")
-```
-
-An `.rda` file should now exist in your project directory, as shown in the image below.
-
-![Figure 3.7: Generated `.rda` file after using `save()`.](images/Rstudio_rda.png)
-
-Now, let's try removing our vectors from our work-space and loading them from the `.rda` file we just generated. You can use `rm()` to remove objects from your work-space, as shown below.
-
-```{r eval = FALSE}
-rm(x, y)
-```
-
-Now that our work-space is empty, if you type `x` or `y` into the console, RStudio will not know what to return in response. We have to import the data back into our work-space so that RStudio knows what `x` and `y` contain.You can use `load()` to import the vectors to your current RStudio work-space, using the format below.
-
-```{r eval = FALSE}
-load(file = "vec.rda")
-```
-
-The vectors should now be present in the work-space again, and can be printed to the console if you type in their respective names.
--->
 
 ## Script formatting
 
 You should now be familiar with how to open the Scripts window, as well as some of the advantages of typing your code into this window rather than into the console directly. Before you write your first script, let's review some basic script formatting. 
 
-Before you enter any code into your script, it is good practice to fill the first few lines with text comments which indicate the script's title, author, and creation or last edit date. You can create a comment in a script by typing `#` before your text. An example is given below.
+Before we enter any code into our script, it is good practice to fill the first few lines with text comments which indicate the script's title, author, and creation or last edit date. We can create a comment in a script by typing `#` before the text. An example is given below.
 
 ```{r}
 #Title: Ozone time series script
@@ -104,7 +49,7 @@ Before you enter any code into your script, it is good practice to fill the firs
 #Date: January 8, 2072
 ```
 
-Below your script header, you should include any packages that need to be loaded for the script to run. Including the necessary packages at the top of the script allows you, and anyone you share your code with, to easily see what packages they need to install. This also means that if you decide to run an entire script at once, the necessary packages will always be loaded before any subsequent code that requires those packages to work. 
+Below our script header, we should include any packages that need to be loaded for the script to run. Including the necessary packages at the top of the script allows you, and anyone you share your code with, to easily see what packages they need to install. This also means that if you decide to run an entire script at once, the necessary packages will always be loaded before any subsequent code that requires those packages to work. 
 
 The first few lines of your scripts should look something like the following.
 
@@ -124,9 +69,9 @@ library(tidyverse)
 
 ```
 
-The rest of your script should be dedicated to executable code. It is good practice to include text comments throughout the script, in between different chunks of code, to remind yourself what the different sections of code are for (i.e., `#import packages` in the above example). This also makes it easy for anyone you share your code with to understand what you're trying to do with different sections within the script.
+The rest of your script should be dedicated to executable code. It is good practice to include text comments throughout the script, in between different chunks of code, to remind yourself what the different sections of code are for (i.e., `#1. Packages` in the above example). This also makes it easy for anyone you share your code with to understand what you're trying to do with different sections within the script.
 
-You can also use headers and sub-headers in your scripts using `#`, `##`, and `###` before your text and `---` after as shown below:
+We can also use headers and sub-headers in your scripts using `#`, `##`, and `###` before our text and `----` after as shown below:
 ```{r, eval = FALSE}
 # Section ----
 ## Subsection ----
@@ -136,98 +81,17 @@ You can also use headers and sub-headers in your scripts using `#`, `##`, and `#
 Headings and subheadings are picked up by RStudio and displayed in the Document Outline box. You can open the Document Outline box by clicking the button highlighted in the image below. Use of these headings allows easy navigation of long scripts, as you can navigate between sections using the Document Outline box. 
 
 
-![Example script headings, document outlines, and comments. Note the "---" which specifies a comment is a header.](images/Rstudio_documentoutline2.png){width=100%}
+![Example script headings, document outlines, and comments. Note the "----" which specifies a comment is a header.](images/Rstudio_documentoutline2.png){width=100%}
 
 ## Viewing data and code simultaneously
 
-Before we get into more about coding and workflows, you may want to know how to view your scripts and data side-by-side. You can open a script, plot, or data set in a new window by clicking and dragging the tab in RStudio (may not be compatible with Mac), or by clicking the button highlighted in the image below. 
+Once we start working with large datasets, you may find yourself wanting to be able to to view your scripts and data side-by-side. You can open a script, plot, or data set in a new window by clicking and dragging the tab in RStudio (may not be compatible with Mac), or by clicking the button highlighted in the image below. 
 
 ![How to open an R script/plot/data set in a new window.](images/Rstudio_newwindow.png){width=100%}
 
-Now that you're familiar with navigating RStudio and some basic coding building blocks, let's move over to Chapter 3, where we'll review a normal workflow in R.
+Now that we're familiar with navigating RStudio and some basic coding building blocks, let's move over to Chapter 3, where we'll review a normal workflow in R.
 
 
-## Troubleshooting error messages
-
-In the previous section, you were introduced to your first error message in R, and we briefly discussed how to resolve the issue. 
-
-As you become more familiar with R and start using more complex functions, you will become better acquainted with error messages in R, and how to deal with them accordingly.
-
-We'll go through a few examples of error messages in the following sections, as well as how to read the errors, and how to fix your code to resolve the issues. 
-
-### Script diagnostics
-
-When writing code in the Script window, RStudio will highlight any syntax errors in your code with a red squiggly line and an 'x' in the side bar, as shown below. You can hover over the 'x' to see what is causing the error. 
-
-![Figure 3.8: RStudio highlights syntax errors in the Scripts window.](images/Rstudio_diagnostics.png)
-
-In the above message, R is telling you that it is not sure what to do with `b`. As mentioned previously, variable assignment is done in the format `name <- assignment`. However, in the above example, the variable assignment statement is written as `name name <- assignment`. Since variable names cannot contain spaces, R reads `a b` as two separate input variable names, not as a single string. If you wanted to assign a value of 0 to both `a` and `b`, you would need to write the statement once per variable, as shown below.
-
-```{r}
-a <- 0
-b <- 0
-```
-
-Let's look at another example. Some functions require you to write code with nested parentheses. A good example would be the `aes()` argument that is called inside of `ggplot()`, as shown below.
-
-```{r message = FALSE, echo = FALSE}
-library(readr)
-library(ggplot2)
-
-#import ozone data set
-airPol <- read_csv("data/2018-01-01_60430_Toronto_ON.csv")
-```
-
-```{r eval = FALSE}
-#plot ozone concentration vs. time
-ggplot(data = airPol, 
-       aes(x = date.time,
-           y = concentration,
-           colour = pollutant)) +
-  geom_point()
-```
-
-(For more detail about importing and using `ggplot2`, please re-visit Chapter 2, section 2.3.4, or see Chapter 11.)
-
-If you were to forget one of the parentheses in the previous line of code, RStudio would highlight it similar to below:
-
-![Figure 3.9: RStudio highlights unmatched parentheses in the script window.](images/Rstudio_unmatched.png)
-
-Here R is telling you that you have an unmatched opening bracket. To resolve the error, simply add a closing bracket to match. 
-
-The `expected ',' after expression` is a common error that you will see accompanying unmatched opening brackets. Sometimes you might get this error in the console after running code that is missing a bracket somewhere. It is good practice to check your parentheses a few times before running your code to make sure that all the commands are closed, and that R doesn't keep waiting for you to continue inputting code after you've click *Run*. If you notice that the `>` in your R console has turned into a `+`, this is likely because you've just run a command that is missing a closing bracket, and thus, R is not aware that your code is finished. Simply input a closing bracket into the console, and the `>` should return.
-
-### Reading error codes
-
-While the script window is very useful for pointing out syntax errors in your code, there are many other errors that can arise in RStudio which the script window is not able to capture. These are generally errors that arise from trying to execute your code, rather than from mistakes in your syntax.
-
-The following is a prime example of such an error.
-
-```{r error = TRUE}
-q <- 8 + "hi"
-```
-
-Here we are trying to add a numeric value (8) to a character string ("hi"), then set the sum of the two to variable `q`. R has given us an error in return, because there is no logical way for R to add a numeric value to non-numeric text.
-
-The error indicates that we have passed a `non-numeric argument to binary operator`, meaning we have used a non-numeric data type for an expression which is exclusively reserved for numeric data. If you try to add, divide or multiply two character strings using arithmetic operations in the console, you will get the same error. 
-
-```{r error = TRUE}
-"hey" * "hi"
-```
-
-It is important to be aware of these error codes as many functions require specific data types as their inputs. You can always look at the required data type by looking at the documentation for the function (generally, this can be viewed by typing `?function` into the console, where `function` is the name of the function). If the function requires numeric data, inputting character strings or logical values will throw the errors shown above. If the function requires logical values, inputting numeric data or character strings will throw the errors shown above. 
-
-In order to avoid these errors, make sure that you are using the right type of data in your functions. You can always check your data type using `class()`. Some examples are shown below.
-
-```{r}
-class("hi")
-
-class(10)
-
-class(1L)
-
-class(TRUE)
-```
 
 ## Summary
 
@@ -235,7 +99,6 @@ In this chapter we've covered:
 
   - R workflows in the context of projects and scripts
   - What's considered *real* when working in RStudio
-  - How to format your script for legibility (Remember you're the one who's going to be stuck rereading it!)
-  - Troubleshooting some common error messages
+  - How to format our scripts for legibility (Remember you're the one who's going to be stuck rereading it!)
   
-Now that you're familiar the above, we'll introduce RMarkdown, a way to combine your R code, it's outputs, and your writing all in one dynamic document (like your lab reports!).  
+Now that you're familiar with the above, we'll introduce RMarkdown, a way to combine your R code, it's outputs, and your writing all in one dynamic document (like your lab reports!).  
