@@ -42,7 +42,7 @@ Each pane serves a specific role:
 
 As many of us spend an absurd amount of time staring at bright screens, some of you may be interested in setting your RStudio to Dark Mode. 
 
-You can customize the appearance of your RStudio interface by clicking *Tools*->*Global Options*, or *RStudio*->*Preferences* on Mac, then clicking "Appearance" on the left. Select your preferred Editor Theme from the list.
+You can customize the appearance of your RStudio interface by clicking *Tools*->*Global Options*, or *RStudio*->*Preferences* on Mac, then clicking "Appearance" on the left. Select your preferred Editor Theme from the list. My personal favourite is `Tomorrow Night Bright`, but feel free to try a few until you find one that works for you.
 
 ![Figure 2.4: RStudio Appearance customization window.](images/Rstudio_darkthemes.png){width=100%}
 

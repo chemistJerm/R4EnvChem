@@ -5,7 +5,7 @@
 Now that you know how to navigate RStudio and have a working project, we'll take a look at the basics of R. As we're chemists first and not computer programmers, we'll try and avoid as much of the nitty-gritty underneath the hood aspects of R. However, a risk of this approach is being unable to understand errors and warnings preventing your code from running. As such, we'll introduce the most important and pertinent aspects of the R language to meet your environmental chemistry needs. 
 
 
-## Running R Code
+## Running R code
 
 To start, let's get familiar with running R code directly from the console. Throughout the book, code you can copy and run will look like this (mouse over the first box to see the quick copy button): 
 
@@ -100,7 +100,7 @@ y <- 12
 
 The code above returns the `object 'y' not found` error because we're adding `+ 1` to `y` which hasn't been created yet, it's created on the next line. These errors also pop up when we edit our code without clearing our workspace. All variables created while RStudio is open are stored in the "working environment" so we can call them later, even if we change our code. This means we can accidentally reference a variable that isn't reproduced in the latest iteration of our code. Consequently, a good practice is to frequently clear our work-space using the 'broom' button in the **Environment** pane. This will help us to ensure the code you're writing will be organized in the correct order; see [Saving R scripts] for why this is important. 
 
-## Data Types
+## Data types
 
 Data types refer to how data is stored and handled by and in R. This can get complicated quickly, but we'll focus on the most common types here so we can get straight to the fun stuff. Firstly, here are the data types you'll likely be working with:
 
@@ -131,7 +131,7 @@ x
 x / 2
 ```
 
-So we've converted our character string `"6"` to the numerical value `6`. Keep in mind there are other conversion functions which are described [elsewhere](https://www.geeksforgeeks.org/conversion-functions-in-r-programming/), but we can't always convert types. In the above example we could convert a character to numeric because it was ultimately a number, but we couldn't do the same if the value of `x` was `"six"`. 
+So we've converted our character string `"6"` to the numerical value `6`. Keep in mind there are other conversion functions which are described [elsewhere](https://www.geeksforgeeks.org/conversion-functions-in-r-programming/), but it may not always be possible to convert between data types. In the above example we could convert a character to numeric because it was ultimately a number, but we couldn't do the same if the value of `x` was `"six"`. 
 ```{r, error = TRUE}
 x <-"six"
 x <- as.numeric(x)
@@ -141,7 +141,7 @@ x
 This error message means that R didn't know how to convert "six" to a numeric value, so it instead turned it into an *NA*, representing a missing value. 
 
   
-## Data Structures
+## Data structures
 
 Data structures refers to how R stores data. Again, it's easy to get lost in the weeds here so we'll focus on the most common and useful data type for your work which will overwhelmingly be **data frames**. 
 
@@ -181,7 +181,7 @@ Note that `read_csv()` requires us to specify the file name, but in the above ex
 What we've done above is called *relative referencing* and it's a huge benefit of projects. The actual data file is stored somewhere on your computer in a folder like `"C:/User/Your_name/Documents/School/Undergrad/Second_Year/R4EnvChemTemplate/data/2018-01-01_60430_Toronto_ON.csv"`. If we weren't in a project, this is what you'd need to type to open your file, but since we're working in the project, R assumes the long part, and begins searching for files inside the project folder. Hence, why we only need `"data/2018..."`. Not only is this much simpler to type, and but it makes sharing your work with colleagues, TAs, and Profs (and yourself!) much easier. In other words, if you wanted to share your code, you would send the entire project folder (code & data) and the receiver could open it and run it as 
 
 
-## Vectors and Lists
+## Vectors and lists
 
 R has other data structures which aren't as frequently used, but it's worth being aware of their existence as we will be making use of these in later chapters.
 
@@ -203,17 +203,30 @@ log
 hi <- list("Hello", c(5, 10, 15, 20), c(TRUE, TRUE, FALSE))
 hi
 ```
-Again, you don't need to worry too much about these until Section 2, but if you are interested in learning more about more advanced data structures, you can check out the  [*Data structure*](http://adv-r.had.co.nz/Data-structures.html) chapter of *Advanced R* by Hadley Wickham.
+Again, you don't need to worry too much about these until Section 2, but if you are interested in learning more about more advanced data structures, you can check out the  [*Data structures*](http://adv-r.had.co.nz/Data-structures.html) chapter of *Advanced R* by Hadley Wickham.
 
-## R Functions
+## Functions
 
 Functions are bits of code written to execute a specific task. We've already used several functions such as `library()` to import packages, and `read_csv()` to read the air quality data as seen in [Data Structures] above. Functions offer a convenient means to reduce the amount of typing while making code more reliable and readable. Some of these functions are built into R, such as `library()`, but often people write new functions to improve upon base R to help it meet the needs of it's users, such as the `read_csv()`. A collection of functions for a similar tasks is stored in a package, such as the `tidyverse` suite of packages which contains functions for plotting (`ggplot2`), reading data `read_csv()` and more. 
 
-Let's take a look at one of the functions you'll be using the most: `ggplot` from the `ggplot2` package which is included in the `tidyverse`.
+### Calling unloaded functions
 
-### ggplot2 
+We've called functions like `read_csv` from the `readr` package because they were implicitly imported when we called `library(tidyverse)`. What this does is import *all* of the functions within a package into the R workspace, so we can simply refer to them by name later on. Sometimes you'll want to be explicit with which function you call, as you can run into conflicts where different functions from different packages have the same name. Or you might not want to import the entire package when you only need to call one function. Either way, to explicitly call a function from a specific package we type the package name, followed by `::`, and the function name. I.e. We can use `read_csv` without importing the `tidyverse`/`readr` packages by simply typing: `readr::read_csv()`. Note the package still needs to be installed on your computer for this to work. 
 
-`ggplot` allows us to create a variety of visualizations to explore and communicate our data and results. Like every function, `ggplot` has required *arguments*, i.e. data and instructions you pass to the function. The required arguments for this function are the *data* to be plotted and the *aesthetic mappings* for how the plot should look. Using our loaded air quality data from above, you can copy and paste the following code in the console: 
+### Function documentation
+
+An oft unappreciated aspect of packages is that they not only contain functions we can use, but documentation. Documentation provides a description of the function (what it does), what arguments it takes, details, and working examples. Often the easiest way to learn how to use a function is to take a working example and change it bit by bit to see how it works etc. To see documentation check the "help" tab in the "outputs" window or type a question mark in front of a functions name: 
+
+```{r, eval = FALSE}
+?ggplot
+```
+You can also write your own functions, but that's a little more advanced so we'll come back to it later on in Section 2. 
+
+For now, let's take a look at one of the functions you'll be using the most: `ggplot` from the `ggplot2` package included in the `tidyverse`.
+
+## Plotting data with ggplot2 
+
+`ggplot` is the central function of the `ggplot2` package, and it allows us to create a variety of visualizations to explore and communicate our data and results. Like every function, `ggplot` has required *arguments*, i.e. data and instructions you pass to the function. The required arguments for this function are the *data* to be plotted and the *aesthetic mappings* for how the plot should look. Using our loaded air quality data from above, you can copy and paste the following code in the console: 
 
 
 ```{r, message = FALSE, warning = FALSE}
@@ -239,8 +252,8 @@ Let's break down the code above:
     - `colour = pollutant` means we colour each point based on the value of the `pollutant` column of `airPol`. 
   - We add a `+` on the second last line of code as this so we can *add* components to `ggplot()`. This is a convention which is unique to `ggplot()`.
   - And finally we add `geom_point()` to specify what type of plot we want; in this case it's a scatter plot. 
-    - `geoms` are layers that combine data, aesthetic mappings, and other data to create a plot. 
-    - There are other many other geoms. Go ahead and try `geom_line()`. For more examples see [Visualizations] in Section 3. 
+    - `geoms` (short for geometric objects) are layers that combine data, aesthetic mappings, and other data to create a plot. 
+    - There are other many other geoms. Go ahead and try `geom_line()`. For more examples see [Visualizations] in Section 2. 
     
 `ggplot()` allows us to quickly create numerous plots of our data to aid our analysis. We can pass more than geoms to ggplot to improve our graphics. We can even stack geoms! 
 
@@ -269,23 +282,23 @@ This plot looks more complicated then the previous one, but it's the same data p
   - Made some final aesthetic changes using `theme()`
     - specifically we removed the legend using `legend.position = "none"`. 
 
-This covers the basics of `ggplot()` but there's a ton more you can do with this function, and it can be extended even further with other packages. All of this is discussed in more detail in the [Visualizations] chapter. 
+This covers the basics of `ggplot()` but there's a ton more you can do with this function, and it can be extended even further with other packages. All of this is discussed in more detail in the [Visualizations] chapter, but for now, just try experimenting with some of the geoms listed below to see a few of the different ways this data can be plotted. If some do not display correctly or produce an error message, you may need to use a different data column for y or x.
 
-### Calling specific functions
+  - `geom_violin(scale = "width")` 
+  - `geom_count()`
+  - `geom_area()`
+  - `geom_line()`
+  - `geom_step()`
+  - `geom_col()`
+  
+For more details on any of these geoms, check out their [Function documentation] using the `?` operator.
 
-We've called functions like `ggplot()` and `read_csv` from the `ggplot2` and `readr` packages, respectively, because they were implicitly imported when we called `library(tidyverse)`. What this does is import *all* of the functions within a package into the R workspace, so we can simply refer to them by name later on. Sometimes you'll want to be explicit with which function you call, as you can run into conflicts where different functions from different packages have the same name. Or you might not want to import the entire package when you only need to call one function. Either way, to explicitly call a function from a specific package we type the package name, followed by `::`, and the function name. I.e. We can use `read_csv` without importing the `tidyverse`/`readr` packages by simply typing: `readr::read_csv()`. Note the package still needs to be installed on your computer for this to work. 
+<!-- 
+Since part of the Chapter 6 exercise involves students creating two visualizations, I thought it would be helpful to include just a little more detail in this sub-chapter since it's the only time that ggplot is mentioned before they reach Chapter 6. I know the goal is to keep Section 1 as streamlined as possible, so hopefully giving them this list of example geoms is just enough to show some of what's possible without spending too much time on it. I assume that don't want to leave things vague enough that students feel required to read the Visualizations chapter before doing the assignment.
+-Steven
+-->
 
-### Function Documentation
-
-An oft unappreciated aspect of packages is that they not only contain functions we can use, but documentation. Documentation provides a description of the function (what it does), what arguments it takes, details, and working examples. Often the easiest way to learn how to use a function is to take a working example and change it bit by bit to see how it works etc. To see documentation check the "help" tab in the "outputs" window or type a question mark in front of a functions name: 
-
-```{r, eval = FALSE}
-?ggplot
-```
-You can also write your own functions. Please see [Programming with R] for additional details. 
-
-
-## Exporting Results
+## Exporting results
 
 In some cases, your code may be used to generate large data structures which require quite a bit of input to create. It can be quite tedious to re-run the code used to generate these large data sets every time you open RStudio, and you might find yourself wanting to save the data structure to a *real* file that you can simply import the next time you open the application. Most often this will be an intermediate step of your data analysis in the form of a data frame. To save a data frame as a `.csv` file, we can use `write.csv()`. 
 

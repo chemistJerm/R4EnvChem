@@ -1,4 +1,4 @@
-# R Studio Projects
+# RStudio Projects
 
 You're probably eager to start coding, but an equally important aspect is understanding the structure of your work. Knowing how to organize the files needed for your analysis and how to access them quickly is critical and learning this format early on will save you plenty of time and heartache down the line. So let's hold off on coding and consider *where* we're working on your computer.
 
@@ -16,7 +16,7 @@ By default, R usually sets the working directory to the home directory on your c
 
 To make things easier on ourselves, we'll be doing all of our work in RStudio within an **R project**. When we create an R project, R sets the working directory to a file folder of our choice. Any files that our code needs to run (i.e., data sets, images, etc.) are placed within this folder. We can then use relative paths to refer to data files in the project folder, which is much more conducive to sharing code with colleagues, TAs, and Profs. 
 
-## Importing the R4EnvChem Project
+## Importing the R4EnvChem project
 
 While you can create a project from scratch (discussed below), we've created a draft project template. Download it, and you'll have a working RStudio project that you can use as you follow along with the code in the rest of this chapter and the tutorial exercise. 
 
@@ -76,9 +76,9 @@ We'll preach more about the usefulness of projects later on, but now that we've 
 ---------------------------
 
 
-## Bonus Info: Creating a Blank RStudio project
+## Blank RStudio projects
 
-To create a new RStudio project from scratch: go to *File*->*New Project*, or click the button highlighted in the image below. Click *New Directory*, then *New Project*. 
+When you want to create a new RStudio project from scratch (e.g. for a lab report): go to *File*->*New Project*, or click the button highlighted in the image below. Click *New Directory*, then *New Project*. 
 
 ![](images/Rstudio_newproject.png)
 You may want your project directory to be a sub-folder of an existing directory on your computer which already contains your data sets. If this is the case, click *Existing Directory* instead of *New Directory* at the previous step, and then select the folder of your choice.

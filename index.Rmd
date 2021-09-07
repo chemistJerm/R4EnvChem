@@ -16,7 +16,7 @@ bibliography: references.bib
 
 Howdy, 
   
-This website is more-or-less the living results of a collaborative project between us. We're not trying to be an exhaustive resource for all environmental chemists. Rather, we're focusing on developing broadly applicable data science course content (tutorials and recipes) based in `R` for undergraduate environmental chemistry courses and research. Please note that some of the later chapters are still a work in progress. 
+This website is more-or-less the living results of a collaborative project between us. We're not trying to be an exhaustive resource for all environmental chemists. Rather, we're focusing on developing broadly applicable data science course content (tutorials and recipes) based in `R`, specifically targeted towards undergraduate environmental chemistry courses and research. Please note that some of the later chapters are still a work in progress. 
 
 This book is broken up into four sections: 
 
@@ -25,11 +25,11 @@ This book is broken up into four sections:
   - **Section 3: Data Analysis Toolbox** explores the theory behind the most common data analysis practices in environmental chemistry. These include linear regression analysis, plotting, etc. 
   - **Section 4: Notes for Env. Chem. Labs** consist of chapters specific to individual laboratory experiments. They rely upon knowledge from the previous three sections to introduce concepts unique to individual labs. 
 
-We recommend everyone reads over the first two sections in sequential order to understand the general R workflow which will be employed in all environmental chemistry courses. 
+We strongly recommend that you read through the Sections 1 and 2 in sequential order to understand the general R workflow which will be employed in all environmental chemistry courses. Once you're more confident in R and the `tidyverse`, you can check out any chapter in Section 3 for more detail on specific topics.
 
 ## Providing Feedback {-}
 
-If you notice an error/mistake or have suggestions for adding features or improving the book, please reach out to any of the [Authors] or flag an issue on this books github repository at [https://github.com/DavidRossHall/R4EnvChem](https://github.com/DavidRossHall/R4EnvChem)
+If you notice an error/mistake or have suggestions for adding features or improving the book, please reach out to any of the authors below or flag an issue on this books github repository at [https://github.com/DavidRossHall/R4EnvChem](https://github.com/DavidRossHall/R4EnvChem)
 
 ## Authors {-}
   
@@ -38,7 +38,7 @@ If you notice an error/mistake or have suggestions for adding features or improv
   - [Dave](https://sites.chem.utoronto.ca/penglab/content/people) at [davidross.hall@mail.utoronto.ca](davidross.hall@mail.utoronto.ca)
   - [Steven](https://sites.chem.utoronto.ca/penglab/content/people) at [steven.kutarna@mail.utoronto.ca](steven.kutarna@mail.utoronto.ca)
   - [Kristen](https://www.abbattgroup.ca/members/) at [kristen.yeh@mail.utoronto.ca](kristen.yeh@mail.utoronto.ca)
-  - [Dr. D'eon](https://www.chemistry.utoronto.ca/people/directories/all-faculty/jessica-deon) at [jessica.deon@utoronto.ca](jessica.deon@utoronto.ca)
+  - [Professor D'eon](https://www.chemistry.utoronto.ca/people/directories/all-faculty/jessica-deon) at [jessica.deon@utoronto.ca](jessica.deon@utoronto.ca)
   
 
   

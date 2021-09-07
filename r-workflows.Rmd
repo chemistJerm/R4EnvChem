@@ -41,7 +41,7 @@ It is paramount that we save the scripts you code in, and that we save them *reg
 
 You should now be familiar with how to open the Scripts window, as well as some of the advantages of typing your code into this window rather than into the console directly. Before you write your first script, let's review some basic script formatting. 
 
-Before we enter any code into our script, it is good practice to fill the first few lines with text comments which indicate the script's title, author, and creation or last edit date. We can create a comment in a script by typing `#` before the text. An example is given below.
+Before we enter any code into our script, it is good practice to fill the first few lines with text comments which indicate the script's title, author, and creation or last edit date. We can create a comment in a script by typing `#` before the text. Here's an example from the top of `Rscript-example.R`.
 
 ```{r}
 #Title: Ozone time series script
@@ -81,11 +81,11 @@ We can also use headers and sub-headers in your scripts using `#`, `##`, and `##
 Headings and subheadings are picked up by RStudio and displayed in the Document Outline box. You can open the Document Outline box by clicking the button highlighted in the image below. Use of these headings allows easy navigation of long scripts, as you can navigate between sections using the Document Outline box. 
 
 
-![Example script headings, document outlines, and comments. Note the "----" which specifies a comment is a header.](images/Rstudio_documentoutline2.png){width=100%}
+![Example script headings, document outlines, and comments. Note the "----" which indentifies a comment as a header to RStudio.](images/Rstudio_documentoutline2.png){width=100%}
 
 ## Viewing data and code simultaneously
 
-Once we start working with large datasets, you may find yourself wanting to be able to to view your scripts and data side-by-side. You can open a script, plot, or data set in a new window by clicking and dragging the tab in RStudio (may not be compatible with Mac), or by clicking the button highlighted in the image below. 
+Once we start working with large datasets, you may find yourself wanting to be able to to view your scripts and data side-by-side. You can open a script, plot, or dataset in a new window by clicking and dragging the tab in RStudio (may not be compatible with Mac), or by clicking the button highlighted in the image below. 
 
 ![How to open an R script/plot/data set in a new window.](images/Rstudio_newwindow.png){width=100%}
 
