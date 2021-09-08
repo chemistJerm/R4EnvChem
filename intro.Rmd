@@ -21,9 +21,9 @@ Read on for instructions on downloading all three.
 
 A quick aside, but don't be intimidated by the term "coding". Coding is simply writing instructions for the computer to execute. The only catch is has to be in a language that both we, humans, and the computer can understand. For our needs we're using R, and like any language, R has it's own syntax, rules, and quirks which we'll cover in later chapters.
   
-### Downloading RStudio IDE
+### RStudio
 
-RStudio is the *integrated development environment* of choice when working with R. It's where you'll actually be typing your code and interacting with R. Again, R is a language, and you need somewhere to write it down to make use of it. Writing in English can be done with a pencil and notepad or a word processor filed with useful tools to help you write. RStudio is the later for coding in R. [**You can download the latest version of RStudio here**](https://www.rstudio.com/products/rstudio/download/#download). 
+RStudio is the *integrated development environment* (IDE) of choice when working with R. It's where you'll actually be typing your code and interacting with R. Again, R is a language, and you need somewhere to write it down to make use of it. Writing in English can be done with a pencil and notepad or a word processor filed with useful tools to help you write. RStudio is the later for coding in R. [**You can download the latest version of RStudio here**](https://www.rstudio.com/products/rstudio/download/#download). 
 
 Once you have R and RStudio installed, go ahead and open up RStudio. Once you open RStudio, you'll be greeted with an interface divided into numerous panes. We've highlighted the major ones in the image below:  
 
@@ -35,7 +35,26 @@ Each pane serves a specific role:
   - **The environment**  window lists all variables, data, and functions you've created since the start of your coding session.  
   - **The viewer** shows your outputs, help documents, etc. which each has their own tab. 
 
-### Installing packages
+
+
+Throughout the book, you'll see lines of code like the one below. You can copy (or type) these directly into the console window and press Enter to run them. 
+
+```{r}
+2 + 2
+```
+
+Noticed that both the code (the first part) and what the code outputs (the second part) are shown. Throughout this book code outputs will be proceeded by `##`. You can run code directly from the console. It's handy for short and sweet snippets of code, something that can be typed in a single line. For example, we can use R as a calculator:
+
+```{r}
+2 * 3
+```
+```{r}
+pi * (10/2)
+```
+We'll dive into the basics of coding in R in a later chapter. For now, all we need the console for is to install our third major software component, the `tidyverse` suite of packages.
+
+
+### Tidyverse
 
 Packages are previously written snippets of code that extend the capabilities of base R. Typically packages are created to address specific issues or workflows in different types of analysis. This book will make frequent use of a family of packages called the `tidyverse`. These packages all share a common thought process and integrate naturally with one another. 
 
@@ -52,36 +71,6 @@ library(tidyverse)
 ```
 The output show's us which packages are included in the `tidyverse()` and their current version numbers, as well as conflicts (where functions from different packages share the same name). Don't worry about these for now. 
 
-## Running R Code
-
-As we've already seen, you can run bits of R code directly from the console. Throughout the book, code you can copy and run will look like this: 
-
-```{r}
-2 + 2
-```
-
-Noticed that both the code (the first part) and what the code outputs (the second part) are shown. Throughout this book code outputs will be proceeded by `##`. You can run code directly from the console. It's handy for short and sweet snippets of code, something that can be typed in a single line. Examples of this is the `install.packages()` function, or to use R as a calculator:
-
-```{r}
-2 * 3
-```
-```{r}
-pi * (10/2)
-```
- 
-However, working like this isn't very useful Imagine printing a book one sentence at a time, you couldn't really go back and edit earlier work because it's already printed. That's why we write out code in *scripts*. *Scripts* are similar to recipes, in that they're a series of instructions that R evaluates from the top of the script to the bottom. More importantly, writing your code out in a script makes it *more readable* to humans (presumably this includes you). Don't undervalue the usefulness of legible code. Your code will evaluate in seconds or minutes whereas it may take you hours to understand what it does.
-
-Let's open up a new script in RStudio by going to *File*->*New File*->*R Script*, or by clicking on the highlighted button in the image below.
-
-![Figure 2.5: Opening a new script in RStudio.](images/Rstudio_newscript.png){width=100%}
-
-This should open up a new window in the RStudio interface, as shown in the following image.
-
-![Figure 2.6: Scripts window in RStudio.](images/Rstudio_scriptwindow.png){width=100%}
-
-You can copy and paste the code above into the script, save it, edit it, etc. and ultimately run specific lines of code by highlighting them and pressing Ctrl+Enter (Cmd+Enter on Mac), or by clicking the "Run" button in the top right corner of the Scripts window. Whenever you copy code blocks from this website (or other online sources). If you're reading this book online, you can easily copy an entire block of code using the `copy` button in the top right corner of the code block. 
-
-We'll dive into the basics of coding in R in the next chapter. 
 
 ## Customizing RStudio
 
@@ -92,7 +81,7 @@ You can customize the appearance of your RStudio interface by clicking *Tools*->
 ![Figure 2.4: RStudio Appearance customization window.](images/Rstudio_darkthemes.png){width=100%}
 
 
-## Where to get help
+## Where to Get Help
 
 While it's often tempting to contact your TA or Professor at the first sign of trouble, it's  better to try and resolve your issues on your own. Given the popularity of R, if you've run into an issue, someone else has too and they've complained about it and someone else has almost certainly solved it! An often unappreciated aspect of coding/data science is knowing *how* to get help, *how* to search for it, and *how* to translate someone's solutions to your unique situation. 
 
