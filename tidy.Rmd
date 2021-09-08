@@ -105,7 +105,7 @@ ggplot(data = atr_long,
 We'll talk more about how to modify `ggplot` in the [Visualizations] chapter, but for now you can understand how our code could scale to accommodate any number of different samples, whereas our previous attempt to graph the *wide* data required an explicit call to geom_point() for every data column. 
 
 
-`pivot_longer` has many other features that you can take advantage of. We highly recommend reading the examples listed on the [pivot_longer](https://tidyr.tidyverse.org/reference/pivot_longer.html) reference page to get a better sense of the possibilities. 
+`pivot_longer` has many other features that you can take advantage of. We highly recommend reading the examples listed on the [data pivoting](https://tidyr.tidyverse.org/articles/pivot.html) reference page to get a better sense of the possibilities. 
 
 ## Extracting variables from column names
 
@@ -199,7 +199,7 @@ Here we see a few more complex ways to select specific columns and pivot data cl
 
 The `names_prefix`, `names_to`, and `names_sep` arguments above mean that the column header "Chemical_A_0_mM" would first be stripped of the specified prefix resulting in "A_0_mM". Then, this string would be separated at the `_` character and distributed across 3 new columns ("Chemical" = A, "Concentration" = 0, "Conc_Units" = mM).
 
-For more examples on how to use this feature of `pivot_longer()`, check out the [data pivoting reference page](https://tidyr.tidyverse.org/articles/pivot.html#many-variables-in-column-names).
+For more examples on how to use this feature of `pivot_longer()`, check out the [data pivoting ](https://tidyr.tidyverse.org/articles/pivot.html#many-variables-in-column-names) reference page.
 
 Note how the Concentration column is still in `<chr>` format? This is because R still sees it as being part of a separated string. We'll learn how to fix this by transforming column values in Chapter 10 ([Transforming Your Data]).
 

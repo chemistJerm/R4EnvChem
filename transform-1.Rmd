@@ -2,15 +2,15 @@
 
 Transformation encompasses any steps you take to manipulate, reshape, refine, or transform your data. We've already touched upon some useful transformation functions in previous example code snippets, such as the `mutate` function for adding columns. This section will explore some of the most useful functionailities of the `dplyr` package, explicitly introduce the pipe operator `%>%`, and showcase how you can leverage these tools to quickly manipulate your data.
 
-The benchmark `dplyr` functions are :
+The essential `dplyr` functions are:
 
   - `mutate()` to create new columns/variables from existing data
   - `arrange()` to reorder rows 
   - `filter()` to refine observations by their values (in other words by row)
   - `select()` to pick variables by name (in other words by column)
-  - `summarize` to collapse many values down to a single summary. 
+  - `summarize()` to collapse many values down to a single summary. 
   
-We'll go through each of these functions, but we highly recommend you read [Chapter 3: Data Transformation](https://r4ds.had.co.nz/transform.html) from *R for Data Science* to get a more comprehensive breakdown of these functions. Note that the information here is based on a `tidyverse` approach, but this is only one way of doing things. Please see the [Further reading] section for links to other equally suitable approaches to data transformation. 
+We'll go through each of these functions, but we highly recommend you read [Chapter 3: Data Transformation](https://r4ds.had.co.nz/transform.html) from *R for Data Science* to get a more comprehensive breakdown of these functions. Note that the information here is based on a `tidyverse` approach, but this is only one way of doing things. Please see the [Further reading] section for links on other approaches to data transformation. 
 
 Let's explore the functionality of `dplyr` using some flame absorption/emission spectroscopy (FAES) data from a *CHM317* lab. This data represents the emission signal of five sodium (Na) standards measured in triplicate:
 
@@ -58,6 +58,7 @@ ops <- data.frame("Operator" = c(">", "<","<=",">=","==","!=", "&","!","|", "is.
 
 knitr::kable(ops)
 ```
+Here's a series of examples showing some different uses of the operators above:
 
 - Selecting all signals below a threshold value
 
@@ -77,12 +78,12 @@ filter(FAES, signal >= 4450 & signal < 8150)
 filter(FAES, replicate != 2)
 ```
 
-- selecting the first standard replicate OR any of the blanks.
+- Selecting the first standard replicate OR any of the blanks
 
 ```{r}
 filter(FAES, (type == "standard" & replicate == 1) | (type == "blank"))
 ```
-- removing any missing values (`NA`) using `is.na()`. Note there are no missing values in our data set so nothing will be removed, if we removed the NOT operator (`!`) we would have selected all rows *with* missing values. 
+- Removing any missing values (`NA`) using `is.na()`. Note there are no missing values in our data set so nothing will be removed, if we removed the NOT operator (`!`) we would have selected all rows *with* missing values. 
 
 ```{r}
 filter(FAES, !is.na(signal))
@@ -94,49 +95,51 @@ These are just some examples, but you can combine the logical operators in any w
 
 ## Reordering rows
 
-`arrange()` simply reorders the rows of a tibble based on the value you passed to it. By default it arranges the specified values into ascending order. Let's arrange our signal in increasing by increasing order:
+`arrange()` simply reorders the rows of a tibble based on the value you passed to it. By default it arranges the specified values into ascending order. Let's arrange our data by increasing order of signal value:
 
 ```{r}
 arrange( FAES, signal)
 ```
 
-Since our original `FAES` data is already arranged by increasing `cong_Na` and `replicate`, let's inverse that order by arranging `conc_Na` into descending order using the `desc()` function BUT arrange the `signal` values in:
+Since our original `FAES` data is already arranged by increasing `cong_Na` and `replicate`, let's inverse that order by arranging `conc_Na` into descending order using the `desc()` function. Within that, we'll also arrange the `signal` values in ascending order:
 
 ```{r}
-# Note the order of precedence
+# Note the order of precedence (left-to-right)
 arrange(FAES, desc(conc_Na), signal)
 ```
-
-Just note with `arrange()` that `NA` values will always be placed at the bottom, whether you use `desc()` or not. 
+This is possible here because there are duplicate values of `conc_Na`. Just note that when using `arrange()`, `NA` values will always be placed at the bottom whether you use `desc()` or not. 
 
 ## Extracting columns by name
 
-`select()` allows you to readily select columns by name. Note however that it will always return a tibble, even if you only select one variable/column.
+`select()` allows you to readily select columns by name. Note that it will always return a tibble, even if you only select one column.
 
 ```{r}
 select(FAES, signal)
 ```
-You can also select multiple columns using the same helper functions described in [Tidying Your Data]. 
+You can also select multiple columns using the same helper functions and operators described in [Tidying Your Data]:
+
+- Selecting all columns except one
 
 ```{r}
 select(FAES, -units)
 ```
+
+- Selecting only columns with names that start with "conc"
 ```{r}
 select(FAES, starts_with("conc"))
 ```
--Using a colon `:` selects all columns between two provided header names (inclusive)
+- Selecting all columns from `conc_Na` to `replicate`
 ```{r}
 select(FAES, conc_Na:replicate)
 ```
-
+- Selecting all columns where the header contains the character "p"
 ```{r}
-# Getting columns where the header contains the character "p"
 select(FAES, contains("p"))
 ```
 
 ##  Adding and transforming columns
 
-`mutate()` allows you to add new columns (i.e. variables) to your existing data set. It'll probably be the most used function for your data transformation needs as you can readily pass other functions and mathematical operators to it to transform your data. let's suppose that our standards were diluted by a factor of 10, we can add a new column for this:
+`mutate()` allows you to add new columns (i.e. variables) to your existing data set. It'll probably be the most used function for your data transformation needs as you can readily pass other functions and mathematical operators to it to transform your data. Let's suppose that our standards were diluted by a factor of 10, we can add a new column for this:
 
 ```{r}
 mutate(FAES, "dil_fct" = 10)
@@ -148,12 +151,12 @@ We can also create multiple columns in the same `mutate()` call:
 mutate(FAES, "dil_fct" = 10, "adj_signal" = signal * dil_fct)
 ```
 
-
-Couple of things to note: 
+<!-- Is this just to help them keep track of what's what? As far as I can tell, the quotation marks are unnecessary. I definitely don't use them. -->
+<!-- Couple of things to note: 
 
   1. The variable we're creating needs to be in quotation marks, hence `"dil_fct"` for our dilution factor variable
-  2. the variables we're referencing do not need to be in quotation marks; hence `signal` because this variable already exist. 
-  3. Note the order of precedence: `dil_fct` is created first so we can reference in the second argument, we would get an error if we swapped the order. 
+  2. The variables we're referencing do not need to be in quotation marks; hence `signal` because this variable already exists. -->
+Note the left-to-right order of precedence: `dil_fct` is created first, which allows us to reference it in the second argument. We would get an error if we swapped the order. 
   
 ### Useful math functions
 
@@ -161,40 +164,43 @@ There are a myriad of mathematical functions and operators you can make combine 
 
 ```{r, echo = FALSE}
 
-funs <- data.frame("function" = c("+", "-", "*", "/", "^", "log()", "round()"),
-                   "definition" = c("additon", "subtraction", "multiplication", "division", "exponent; to the power off...", "returns the specified base-log; see also log10() and log2()", "rounds to a specified number of decimal places"))
+funs <- data.frame("Function/Operator" = c("+", "-", "*", "/", "^", "log()", "round()"),
+                   "Definition" = c("Addition", "Subtraction", "Multiplication", "Division", "Exponent; to the power of...", "Returns the specified base-log; see also log10() and log2()", "Rounds to a specified number of decimal places"))
 
 knitr::kable(funs)
 ```
+
+Let's look at an example combining `select()` and `mutate()` to generate columns containing different transformations of the same data.
 ```{r}
 FAES_ex <- select(FAES, signal)
 mutate(FAES_ex, "rounded_signal" = round(signal, digits = 1), "log10_signal" = log10(signal), "log2_signal" = log2(signal), "doubled_signal" = signal + signal)
 ```
 
-
+You can even use `mutate()` to transform data without adding a new column! 
+```{r}
+mutate(FAES, conc_Na = conc_Na*1000, units = "ug/L", "signal_string" = as.character(signal))
+```
+Here we've changed our units to be in micrograms per litre. This also demonstrates how to easily change the data type of a column, though you'll use this more often to convert numbers which were incorrectly imported as strings back into numeric type.
 
 ## Grouping and summarizing data
 
-`summarize` effectively summarizes your data based on functions you've passed to it (and uses a similar syntax to the `mutate` function to create new columns). Looking at our `FAES` data we'd probably want the mean of the triplicate signals, alongside the standard deviation. Let's see what happens when we apply the summarize function straight up. 
+`summarize()` effectively summarizes your data based on functions you've passed to it (and uses a similar syntax to the `mutate` function to create new columns). Looking at our `FAES` data we'd probably want the mean of the triplicate signals, alongside the standard deviation. Let's see what happens when we apply the summarize function straight up. 
 
 ```{r}
-FAES
 summarize(FAES, "mean" = mean(signal), "stdDev" = sd(signal))
 ```
 
 This doesn't look like what we wanted. What we got was the mean and standard deviation of *all* of the signals, including standards and blanks. Also note how we've lost the other columns/variables and are only left with the mean and stdDev. This is all because we need to **group** our observations by a variable. We can do this by using the `group_by()` function.
 
 ```{r}
-FAES
 groupedFAES <- group_by(FAES, type)
 summarize(groupedFAES, "mean" = mean(signal), "stdDev" = sd(signal))
 ```
-Essentially, *grouping* a tibble invisibly organizes it into 1 or more sub-tables. The summarize and mutate functions will then apply their operations to each group seperately. This is why the summarize function produced a separate `mean` for each of our two groups. Grouping is a very powerful data organizing technique which will make it much easier to quickly organize and perform operations on large datasets.
+Essentially, *grouping* a tibble invisibly organizes it into 1 or more sub-tables. The summarize and mutate functions will then apply their operations to each group separately. This is why the summarize function produced a separate `mean` for each of our two groups. Grouping is a very powerful data organizing technique which will make it much easier to quickly organize and perform operations on large datasets.
 
 Still, it would be nice if we could also get separate mean and stdDev values for each concentration of standard as well. Let's try grouping by both `type` and `conc_Na`.
 
 ```{r}
-FAES
 groupedFAES <- group_by(FAES, type, conc_Na)
 summarize(groupedFAES, "mean" = mean(signal), "stdDev" = sd(signal))
 ```
@@ -204,7 +210,6 @@ Here we've created a new data set, `groupedFAES`, that we grouped by the variabl
 The other benefit to using multiple groups is that the summarize function automatically retains grouping variables in the new summary table. If we only grouped the data by `conc_Na` but still wanted to retain the `type` column in our summary table, we would have to declare it separately:
 
 ```{r}
-FAES
 groupedFAES <- group_by(FAES, conc_Na)
 summarize(groupedFAES, "type" = unique(type), "mean" = mean(signal), "stdDev" = sd(signal))
 ```
@@ -233,7 +238,7 @@ stds_4 #Print variable contents to console
 
 While the code above did it's job, it was a chore to type and certainly isn't easy to read. At every step of this code chunk we saved our updated data outputs to a new variable (`stds_1`, `stds_2`, etc.). However, most of these intermediates aren't important, and moreover the repetitive names clutter our code. As the code above is written, we had to pay special attending to the variable suffix to make sure we're calling the correct data set as our code has progresses. An alternative would be to reassign the outputs back to the original variable name (i.e. `stds_1 <- mutate(stds_1, ...)`), but that doesn't solve the issue of readability as there are still redundant assignments happening. 
 
-A solution for this is the pipe operator `%>%` ( pronounced "then"), an incredibly useful tool for writing more legible and understandable code. The pipe streamlines your code by makeing the actual functions stand out more, rather than the constant variable assignments or re-assignments. Let's rewrite the code above to make full use of the pipe, then we'll break down what's actually happening: 
+A solution for this is the pipe operator `%>%` (pronounced as "then"), an incredibly useful tool for writing more legible and understandable code. The pipe streamlines your code by makeing the actual functions stand out more, rather than the constant variable assignments or re-assignments. Let's rewrite the code above to make full use of the pipe, then we'll break down what's actually happening: 
 
 ```{r}
 meanBlank <- FAES %>% 
@@ -252,11 +257,11 @@ stds <- FAES %>%
 stds
 ```
 
-Same output as before! The code may look a bit different, but the actual function usage hasn't changed at all. As mentioned above, the pipe operator always passes the output of the previous function to the first argument of the next function. So the output of `filter...` is passed to the first argument of `summarize...`, while the argument specified in `summarize` is actually the *second* argument it receives. You're probably wondering how hiding stuff makes your code more legible, but think of `%>%` as being equivalent to "then". We can read the first chunk of code as:
+Same output as before! The code may look a bit different, but the actual function usage hasn't changed at all. As mentioned above, the pipe operator always passes the output of the previous function to the first argument of the next function. So the output of `filter...` is passed to the first argument of `summarize...`, while the argument specified in `summarize` is actually the *second* argument it receives. You're probably wondering how hiding stuff makes your code more legible, but remember that `%>%` is equivalent to the word "then". This means the first chunk of code can be read as:
 
 >"Take the `FAES` dataset, *then* filter for `type == "blank"` *then* collapse the dataset to the mean `signal` value and *then* convert to numeric value *then* pass this final output to the new variable `meanBlank`." 
 
-Not only is the pipe less typing, but the emphasis is on the functions so you can better understand what you're doing vs. where all the intermediates are going. Note that the variable `meanBlank` is only assigned a value *after* all piped functions have been evaluated. 
+Not only does this accomplish the same goal with far less typing, but the visual emphasis in the code is now on the actual functions so you can better understand what you're doing instead of worrying about where all the intermediates are going. Just note that the variable `meanBlank` is only assigned a value *after* all piped functions have been evaluated. 
 
 The second code chunk can be read as:
 

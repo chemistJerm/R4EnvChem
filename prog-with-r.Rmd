@@ -17,7 +17,9 @@ To create a function in R you only need `function()`:
 ```{r, error=TRUE}
 funSum <- function(x,y){ #Declare a new function funSum with two arguments: x and y.
   z <- x + y
-  paste("The sum of", x, "+", y, "is", z, sep =" ") #The argument sep=" " tells the paste function to separate each value in the brackets with a single space when                                                     printing to the console.
+  paste("The sum of", x, "+", y, "is", z, sep =" ") 
+  #The argument sep=" " tells the paste function to separate each value in the brackets 
+  #with a single space when printing to the console.
 }
 
 funSum(1, 3) #A call to funSum where x = 1 and y = 3
@@ -39,28 +41,29 @@ The formula is simple enough, but you may need to calculate any number of mass e
 
 
 ```{r}
-ppmMS <- function(theoMZ, expMZ){ #Declare a new function 'ppmMS' with two arguments: 'theoMZ' and 'expMZ'
-
-  ppm <- abs(theoMZ - expMZ)/theoMZ * 1e6 #Same calculation as above. The 'abs()' function returns the absolute of a numeric value.
+ppmMS <- function(theoMZ, expMZ){ 
+  ppm <- abs(theoMZ - expMZ)/theoMZ * 1e6 
+  #Same calculation as in the formula above. 
+  #The 'abs()' function returns the absolute of a numeric value.
   return(ppm)
 }
 
+ppmMS(theoMZ = 1479.94, expMZ = 1480.01)
 #Theoretical mass = 1479.94 m/z
 #Experimental mass = 1480.01 m/z
-ppmMS(theoMZ = 1479.94, expMZ = 1480.01)
 ```
 
-Pretty useful if you're manually checking something, but we can also use our functions into the pipe to help our data transformation:
+Pretty useful if you're manually checking something in your data, but we can also use our functions into the pipe to help with data transformation:
 
 
 ```{r}
 
 #Example data
-masses <- data.frame("theo" = c(1479.94, 1479.94, 1479.94), #Declare a data frame with two columns "theo" and "exp", each containing a vector of 3 numeric values
+masses <- data.frame("theo" = c(1479.94, 1479.94, 1479.94), 
                      "exp" = c(1478.94, 1479.94, 1480.01))
 
 masses %>% 
-  mutate(massError = ppmMS(theo, exp)) #Add a new column to 'masses' containing the mass error calculated from the first two columns using the ppmMS function.
+  mutate(massError = ppmMS(theo, exp)) 
 
 ```
 
@@ -73,14 +76,18 @@ These are used to specify a path in a function depending on whether a statement 
 
 ```{r}
 
-isGreater <- function(x, y){ #Declares a new function 'isGreater' with two arguments: x and y
+isGreater <- function(x, y){ 
   if(x > y){ 
-    return(paste(x, "is greater than", y, sep = " ")) #If x is greater than y, stop the function and return the pasted string.
-  }else if(x < y){                                  #If x is not greater than y, the previous line is not run and a new condition is tested instead. 
-    return(paste(x, "is less than", y, sep = " ")) #If x is less than y, stop the function and return the pasted string.
+    return(paste(x, "is greater than", y, sep = " ")) 
+    #If x is greater than y, stop the function and return the pasted string.
+  }else if(x < y){                                  
+    #If x is not greater than y, the previous line is not run and a new condition is tested instead. 
+    return(paste(x, "is less than", y, sep = " ")) 
+    #If x is less than y, stop the function and return the pasted string.
   }
   
-  return(paste(x, "is equal to", y, sep = " ")) #If the function makes it to this line, then return this pasted string as the final output.
+  return(paste(x, "is equal to", y, sep = " ")) 
+  #If the function makes it to this line, then return this pasted string as the final output.
 }
 
 isGreater (2, 1) #Call to isGreater, where x = 2 and y = 1
@@ -93,39 +100,45 @@ Our simple function compares two numbers, `x` and `y` and if `x > y` evaluate to
 
 ### Piping conditional statements
 
-You can already see the potential for simply conditional statements in the pipe. However, to keep piping operations legible, `dplyr` offers the `case_when` function, which works similarly to the `else if` statements showcased above. Let's see how it works using a real world example.
+You can already see the potential for simply conditional statements in the pipe. However, to keep piping operations legible, `dplyr` offers the `if_else` function, which works similarly to the `else if` statements showcased above. Let's see how it works using a real world example.
 
-In mass spectrometry undetected compounds are recorded having an intensity of 0; it's a common practice to replace 0 with $\frac{limit~of~detection}{2}$ for subsequent analysis However, we don't want to replace every value with $\frac{LOD}{2}$, only 0s. Let's use the `case_when()` function to create a new values with the recorded intensities
+In mass spectrometry undetected compounds are recorded by the instrument as having an intensity of 0, but it's a common practice to replace 0 with $\frac{limit~of~detection}{2}$ for subsequent analysis. However we don't want to replace every value with $\frac{LOD}{2}$, only 0s. Let's use the `if_else` function to create new values from the recorded intensities.
 
 ```{r}
 
 lod <- 4000 #Previously calculated LOD (limit of detection)
-results <- data.frame("mz" = c(308.97, 380.81, 410.11, 445.34 ), #Example data
+results <- data.frame("mz" = c(308.97, 380.81, 410.11, 445.34 ), 
                       "intensities" = c(0, 1000, 5000, 10000)) 
 
-removeLow_IC <- function(mzTable, limDetect){ #Declare a new function 'removeLow_IC' with arguments 'mzTable' and 'limDetect'
+removeLow_IC <- function(mzTable, limDetect){ 
   
   adj_intensities<-mzTable %>% 
-    mutate(reportedIntensities = case_when(intensities < limDetect ~ limDetect/2, 
-                                           TRUE ~ intensities)) 
-    #Create a new column 'reportedIntensities where, for every value in the intensities column, if it is less than than the value of limDetect, then assign a value     of limDetect/2 to that row of the new column. If not, then copy the original intensity value to that row of the new column.
+    mutate(reportedIntensities = if_else(intensities < limDetect, limDetect/2, intensities))
+    #Create a new column 'reportedIntensities' where, for every value in the 
+    #intensities column, if it is less than than the value of limDetect, then assign 
+    #a value of limDetect/2 to that row of the new column. If not, then copy the 
+    #original intensity value to that row of the new column.
   
   return(adj_intensities)
 }
 
-final_results<-removeLow_IC(results, lod) #Call the function 'removeLowIC', with mzTable = results and limDetect = lod
+final_results<-removeLow_IC(results, lod) 
+#Call the function 'removeLowIC', with mzTable = results and limDetect = lod
 final_results
 
 ```
 
-Firstly we're creating a new column called `reportedIntensities` using `mutate()` and using `case_when()` to conditionally fill that column. The inputs we've passed to `case_when()` are two-sided formulas. Essentially if the conditions on the left-hand side of the tilda (`~`) evaluate to `TRUE`, `case_when` will execute the right-hand side. Thee first two-sided formula is `intensities < lod ~ lod/2` and checks if the intensities value is less than the previously calculated limit of detection. If `intensitis < lod` evaluates to `TRUE` we insert half of the LOD value for that row. If `intentisites < lod` evaluates to `FALSE`, we move onto the next two-side formula and reevaluate again. The second two-sided formula `TRUE ~ intensities` basically means for everything that's remaining (greater than LOD in our instance) just use the value from the `intensities` column.
+First we're creating a new column called `reportedIntensities` using `mutate()`, then using `if_else()` to conditionally fill that column one row at a time. The `if_else` function works just like the `else if` statements from before, but all in one line so we can use it within a pipe chain. The first parameter is the condition being tested (`intensities < limDetect`), the second parameter is the value to return if the condition is `TRUE`, and the third parameter is the value to return if the condition is `FALSE`.
+<!-- I'll leave this here in case you want to bring it back, but I think it makes more sense to teach if_else() here. case_when() is only really useful when you have a lot of cases to test, and skipping it here also lets us push having to explain the tilde operator until we get to modelling, where they'll use it far more often anyway. -->
+
+<!--The inputs we've passed to `case_when()` are two-sided formulas. Essentially if the conditions on the left-hand side of the tilda (`~`) evaluate to `TRUE`, `case_when` will execute the right-hand side. Thee first two-sided formula is `intensities < lod ~ lod/2` and checks if the intensities value is less than the previously calculated limit of detection. If `intensitis < lod` evaluates to `TRUE` we insert half of the LOD value for that row. If `intentisites < lod` evaluates to `FALSE`, we move onto the next two-side formula and reevaluate again. The second two-sided formula `TRUE ~ intensities` basically means for everything that's remaining (greater than LOD in our instance) just use the value from the `intensities` column.
 
 Some ideas to consider when working with `case-when()`:
 
   - There's no limits to the conditions you can pass to `case_when()`.
-  - *However* `case_when()` evaluates in order so put the more specific conditions before the more general. 
+  - *However* `case_when()` evaluates in order, so remember to put the more specific conditions before the more general ones. 
   - Remember that the point of `case_when()` and piping is legibility. If you're passing multiple conditions, consider writing a function using `else if` statements to keep the pipe legible.  
-
+-->
 
 ## Troubleshooting error messages
 
@@ -209,8 +222,9 @@ class(TRUE)
 
 ## Further reading
 
-These chapter has been intentionally broad, as functional programming in R is somewhat outside the intended scope of this book. We've omitted several other aspects of programming in R such as `for` loops, and other iterative techniques. To get a better sense of what's possible with R programming and to learn more, please refer to the following links:
+These chapter has been intentionally broad, as functional programming in R is somewhat outside the intended scope of this book. We've omitted several aspects of programming in R, such as `for` loops and other iterative techniques. To get a better sense of what's possible with R programming and to learn more, please refer to the following links:
 
-  - [case_when()](https://dplyr.tidyverse.org/reference/case_when.html): the documentation for the `case_when()` function and several useful examples. 
+  - [if_else()](https://dplyr.tidyverse.org/reference/if_else.html): the documentation for the `if_else` function.
+  - [case_when()](https://dplyr.tidyverse.org/reference/case_when.html): the documentation for a more advanced conditional function which can evaluate multiple statements simultaneously. 
   - [Chapter 19: Functions](https://r4ds.had.co.nz/functions.html), [Chapter 20: Vectors](https://r4ds.had.co.nz/vectors.html), and [Chapter 21: Iteration](https://r4ds.had.co.nz/iteration.html) of [*R for Data Science*](https://r4ds.had.co.nz/index.html) by H. Wickham and G. Grolemund.  
   - [Hands-on Programming in R](https://rstudio-education.github.io/hopr/) by G. Grolemund for a more in-depth (but still approachable) take on programming in R. 
