@@ -23,7 +23,7 @@ x <- 12
 x
 ```
 
-In addition to reading code top to bottom, you often *read it from right to left*. `x <- 12` would be read as "take the value `12` and store it into the variable `x`". The second line of code, `x`, simply returns the value stored inside `x`. Note that when a variable is typed on it own, R will print out it's contents. You can now use this variable in snippets of code:
+In addition to reading code top to bottom, you often *read it from right to left*. `x <- 12` would be read as "take the value `12` and store it into the variable `x`". The second line of code, `x`, simply outputs ("returns") the value stored inside `x`. Note that when a variable is typed on it own, R will print out it's contents. You can now use this variable in snippets of code:
 
 ```{r}
 x
@@ -50,7 +50,7 @@ y + 1
 y <- 12
 ```
 
-The code above returns the `object 'y' not found` error because we're adding `+ 1` to `y` which hasn't been created yet, it's created on the next line. These errors also pop up when you edit your code without clearing your workplace. All variables created in a session are stored in the working environment so you can call them, even if you change your code. This means you can accidentally reference a variable that isn't reproduced in the latest iteration of your code. Consequently, a good practice is to frequently clear your work-space suing the 'broom' button in the *environment* pane. This will help you to ensure the code you're writing will is organized in the correct order; see [Saving R scripts] for why this is important. 
+The code above returns the `object 'y' not found` error because we're adding `+ 1` to `y` which hasn't been created yet, it's created on the next line. These errors also pop up when you edit your code without clearing your workplace. All variables created in a session are stored in the working environment so you can "call" them to use their stored value, even if you change your code. This means you can accidentally reference a variable that isn't reproduced in the latest iteration of your code. Consequently, a good practice is to frequently clear your work-space suing the 'broom' button in the *environment* pane. This will help you to ensure the code you're writing will is organized in the correct order; see [Saving R scripts] for why this is important. 
 
 ## Data types
 
@@ -67,13 +67,13 @@ Sometimes R will misinterpret a value as the wrong data type. This can hamper yo
 x <- "6"
 x / 2
 ```
-"non-numeric argument to binary operator" is a commonly encountered error, and it's simply telling you that you're trying to do math on something you can't do math on. You might think if `x` is 6, why can't I divide it by 2? Let's see what type of data `x` is: 
+"non-numeric argument to binary operator" is a commonly encountered error, and it's simply telling you that you're trying to do math on something you can't do math on. You might think if `x` is 6, why can't I divide it by 2? Let's see what type of data `x` is using functions which test for each data type: 
 
 ```{r}
-is.numeric(x)   # test if numeric 
-is.logical(x)   # test if logical
-is.integer(x)   # test if integer 
-is.character(x) # test if character
+is.numeric(x)
+is.logical(x)
+is.integer(x)
+is.character(x)
 ```
 So the value of `x` is a character, in other words R treats it as a word, and we can't do math on that (think, how would you divide a word by a number?). So let's convert the data type of `x` to numeric to proceed. 
 
@@ -104,12 +104,7 @@ Data frames consist of data stored in rows and columns. If you've ever worked wi
 From the `R4EnvChem-ProjectTemplate`, downloaded in [Importing a project], let's import some real data as follows by typing the following into the console: 
 
 ```{r}
-# Install and open tidyverse if you haven't already 
-# install.packages("tidyverse")
-# library(tidyverse)
-
 airPol <- read_csv("data/2018-01-01_60430_Toronto_ON.csv")
-
 ```
 
 `read_csv()` is a useful function from the `tidyverse` which, as you might guess from its name, can read a `.csv` file and convert it into a data frame. The data we just imported contains air quality data measured in downtown Toronto around January 2018. The "Column specification" summary printed to the console is a useful feature of `read_csv()`. It tells you what data type was determined for each column when it was imported. Note that *double* is simply another term for the *numeric* data type. Some of the variables are:
@@ -119,14 +114,16 @@ airPol <- read_csv("data/2018-01-01_60430_Toronto_ON.csv")
   - `pollutant` for the chemical measured
   - `concentration` for the measured concentration in parts-per-million (ppm). 
 
-We've assigned it to the variable: `airPol`. This is so we can reference it and make use of it later on (see below). If we didn't do this our data would simply be printed to the console which isn't helpful. Let's take a look at the data itself: 
+We've assigned it to the variable: `airPol`. This is so we can reference it and make use of it later on (see below). If we didn't do this our data would simply be printed to the console which isn't helpful. Let's take a look at the data itself by typing the name of our variable into the console by itself: 
 
 ```{r}
-# a variable by itself will return it's contents
 airPol
 ```
 
-Here we see that the data is stored in a **tidy** format, which is to say each column is a variable and each row is an observation. So reading the first row, we know that the Toronto 60430 station on 2018-07-01 at midnight measured ambient O~3~ concentrations of 46 ppm (Note the concentration column isn't printed due to width). The concept of tidy data is important and is integral to working in R. It's discussed further in [Tidying Your Data]. Lastly, R will only output a small chunk of our data for us to see. If you'd like to see it in full, go the the `Environment` pane and double click on the `airPol` data. 
+Here we see that the data is stored in a **tidy** format, which is to say each column is a variable and each row is an observation. So reading the first row, we know that the Toronto 60430 station on 2018-07-01 at midnight measured ambient O~3~ concentrations of 46 ppm (Note the concentration column isn't printed due to width). The concept of tidy data is important and is integral to working in R. It's discussed further in [Tidying Your Data]. Lastly, R will only output a small chunk of our data for us to see. If you'd like to see it in full, go the the `Environment` pane and double click on the `airPol` data or use the View() function.
+```{r, eval=FALSE}
+View(airPol)
+```
 
 ### Accessing data in subfolders
 
@@ -181,8 +178,9 @@ ggplot(data = airPol,
   geom_point()
 
 ```
+As is common practice with more complicated functions, we’ve split the function call up over multiple lines to improve readability. Unlike in some other coding languages, R does not care about line breaks, only commas and brackets, so this will not affect how the function runs.
 
-Breaking this down: 
+Breaking down the code above: 
 
   - We're calling `ggplot()` in the first line and passing the arguments inside the parentheses
   - We're specifying that we want to plot the loaded air pollution data with `data = airPol`
@@ -234,10 +232,9 @@ We've called functions like `ggplot()` and `read_csv()` from the `ggplot2` and `
 An oft unappreciated aspect of packages is that they not only contain functions we can use, but documentation. Documentation provides a description of the function (what it does), what arguments it takes, details, and working examples.Often the easiest way to learn how to use a function is to take a working example and change it bit by bit to see how it works etc. To see documentation check the "help" tab in the "outputs" window or type a question mark in front of a functions name: 
 
 ```{r, eval = FALSE}
-# Takes you to the help document for the ggplot function
 ?ggplot
 ```
-You can also write you're own functions. Please see [Programming with R] for additional details. 
+You can also write your own functions. Please see [Programming with R] for additional details. 
   
 ## Summary
 
@@ -248,5 +245,5 @@ In this chapter we've covered:
   - Importing data from your project folder into R
   - Preliminary exploration of `ggplot2` to visualize the aforementioned data. 
 
-Now that you're familiar with navigating RStudio and some basic coding building blocks, you may have realized that working the console can get real messy, real quick. Rread on to [Workflows for R Coding] where we'll discuss R workflows to make everyone's lives easier. 
+Now that you're familiar with navigating RStudio and some basic coding building blocks, you may have realized that working the console can get real messy, real quick. Read on to [Workflows for R Coding] where we'll discuss R workflows to make everyone's lives easier. 
 
