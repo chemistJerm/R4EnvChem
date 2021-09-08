@@ -23,12 +23,12 @@ As we mentioned, tidying data in R is much easier if the data is recorded consis
 
 - *Be consistent*. When naming your samples, make sure they all contain the same elements in the same order. The sample names `Toronto_O3_1` and `Toronto_O3_2` can easily be broken up as demonstrated in [Separating columns] below; `O3_Toronto_1`, `TorontoO32`, and `Toronto_1` can't be so easily organized. 
 - *Use simple headers and avoid spaces*. Often you'll be pasting instrument readings into one `.csv` using *Excel* on whatever computer records the instrument readings. In these situations it's often much easier to paste things in columns. Tidyverse functions don't always play nicely when spaces are involved, so always use underscores (`_`) instead of spaces. `Chemical_A_1` and `Chemical_B_2` are headers that are descriptive for your sample and can be easily pivoted into their own columns. `Chemical A 1 ( I think?!)` is a header isn't.
-- *Make sure data types are consistent within a column*. This harks back to the [Importing data into R] chapter, but a single non-numeric character can cause R to misinterpret an entire column leading to headaches down the line. 
+- *Make sure data types are consistent within a column*. This harks back to the [Importing Your Data Into R] chapter, but a single non-numeric character can cause R to misinterpret an entire column leading to headaches down the line. 
 - *Save your data in UTF-8 format*. Excel and other programs often allow you to export your data in a variety of `.csv` encodings, but this can affect how R reads when importing your data. Make sure you select `UTF-8` encoding when exporting your data. 
 
-## Tidying your data in R
+## Making data "longer"
 
-One of the more laborious parts of data science is tidying your data. If you can, follow the tips in the [Tips for recording data] section, but the truth is you often won't have control over this. To this end, the `tidyverse` suite offers several tools, notably the`dplyr` (pronounced 'dee-ply-arr') package to help you get there. 
+One of the more laborious parts of data science is tidying your data. If you can, follow the tips above when initially recording your data, but the truth is you often won't have control over this. To this end, the `tidyverse` suite offers several tools, notably the`dplyr` (pronounced 'DEE-ply-er') package to help you get there. 
 
 Let's revisit our spectroscopy data from the previous chapter:
 
@@ -63,8 +63,6 @@ ggplot(data = atr_plastics,
 ```
 
 
-### Making data 'longer'
-
 While code above works, it's not particularly handy and undermines much of the utility of `ggplot` because the data *isn't* tidy. Fortunately the `pivot_longer` function can easily restructure our data into the *long* format to work with `ggplot`. `pivot_longer()` works by gathering up multiple columns and transposing them into just two new columns. The first contains all the column headers of the original columns (`names`), and the second contains all the data from those columns(`values`).
 
 Let's demonstrate this with `atr_plastics`: 
@@ -83,11 +81,11 @@ atr_long
 
 Let's break down the code we've executed via the `pivot_longer` function:
 
-  -`data = atr_plastics` specifies the tibble we're trying to convert into long format
+  - `data = atr_plastics` specifies the tibble we're trying to convert into long format
   - `cols = -wavenumber` indicates that we're selecting every column **except** `wavenumber`. In R, the negative sign `-` negates whatever immediately follows it, so `-wavenumber` is read as: NOT wavenumber.
-    - we could have also used a vector to specify each column individually using `cols = c("EPDM",...)` but it's often easier to just use `-` to specify what we *don't* want to select. 
-  -`names_to = "sample"` specifies that the remaining column headers (i.e. names) be converted into an observation in a new column called `sample`.
-  -`values_to = "absorbance"` specifies that the absorbance values under each of the those same old columns be placed into a new column called `absorbance`. 
+    - We could have also used a vector to specify each column individually using `cols = c("EPDM",...)` but it's often easier to just use `-` to specify what we *don't* want to select. 
+  - `names_to = "sample"` specifies that the remaining column headers (i.e. names) be converted into an observation in a new column called `sample`.
+  - `values_to = "absorbance"` specifies that the absorbance values under each of the those same old columns be placed into a new column called `absorbance`. 
 
 We can see in the tibble for `atr_long`, above, that it contains way more rows than there were in `atr_plastics`. Looking at the `wavenumber` column can give us a clue as to why this might be. Each value in `wavenumber` appears 4 times, once for each unique entry in the `sample` column. In fact, every value in `wavenumber` and `sample` were duplicated enough times so that every row of the tibble would contain a unique set of 3 values, which is the ultimate goal of *tidy* data.
 
@@ -104,73 +102,14 @@ ggplot(data = atr_long,
 ```
 
 
-We'll talk more about how to modify `ggplot` in the *Visualizations* chapter, but for now you can understand how our code could scale to accommodate any number of different samples, whereas our previous attempt to graph the *wide* data required an explicit call to geom_point() for every data column. 
+We'll talk more about how to modify `ggplot` in the [Visualizations] chapter, but for now you can understand how our code could scale to accommodate any number of different samples, whereas our previous attempt to graph the *wide* data required an explicit call to geom_point() for every data column. 
 
 
-`pivot_longer` has many other features that you can take advantage of. We highly recommend reading the examples listed on the [pivot_longer page](https://tidyr.tidyverse.org/reference/pivot_longer.html) to get a better sense of the possibilities. For example it's common to record multiple observations in a single column header, i.e. `Chemical_A_0_mM`. We can exploit common naming conventions like this to easily split up these observations as shown below. 
+`pivot_longer` has many other features that you can take advantage of. We highly recommend reading the examples listed on the [pivot_longer](https://tidyr.tidyverse.org/reference/pivot_longer.html) reference page to get a better sense of the possibilities. 
 
-```{r, echo = FALSE}
+## Extracting variables from column names
 
-example <- data.frame("wavelength_nm" = c(488, 572) ,
-                      "Chemical_A_0_mM" = c(0,0),
-                      "Chemical_A_1_mM" = c(1,5),
-                      "Chemical_B_0_mM" = c(2,7),
-                      "Chemical_B_1_mM" = c(NA,20)
-                      )
-
-```
-
-The above code creates a data frame with 5 named columns, each containing two values. Recall from Chapter 3.6 ([Vectors and Lists]) that the `c()` function (short for "combine") is used to create a vector.
-
-
-
-```{r}
-example
-
-
-
-example_long <- pivot_longer(
-   data = example,
-   cols = starts_with("Chemical"),
-   names_prefix = "Chemical_",
-   names_to = c("Chemical", "Concentration", "Conc_Units"),
-   names_sep = "_",
-   values_to = "Absorbance",
-   values_drop_na = TRUE
- )
-
-example_long
-  
-```
-Here we see a few more complex ways to select specific columns and pivot data cleanly:
-
-  -`starts_with("Chemical")` will only select columns for pivoting which have headers starting with the character string "Chemical".
-    -`starts_with()` is a helper function, and can only be used inside other tidyverse functions.
-  -`names_prefix = "Chemical_` will remove the characters "Chemical_" from the start of any selected column headers which contain those characters in that order.
-  -`names_to = c("Chemical", "Concentration", "Conc_Units")` will create 3 new named columns among which to distribute our selected column headers as values.
-    -Pivoting to multiple columns like this requires the `names_sep()` argument to also be provided.
-  -`names_sep = "_"` will separate the old column header strings at the `_` character.
-  -`values_drop_na = TRUE` tells `pivot_longer` to not create rows in the new tibble if they would contain an NA value.
-    -Notice how there is no row in the new tibble for Chemical B at concentration 1 mM and wavelength 488 nm.
-
-The `names_prefix`, `names_to`, and `names_sep` arguments above mean that the column header "Chemical_A_0_mM" would first be stripped of the specified prefix resulting in "A_0_mM". Then, this string would be separated at the `_` character and distributed across 3 new columns ("Chemical" = A, "Concentration" = 0, "Conc_Units" = mM).
-
-Note how the Concentration column is still in `<chr>` format? This is because R still sees it as being part of a separated string. We can convert it to a more useful `<dbl>` format by using the `$` operator to select only the Concentration column and change its data type.
-
-```{r}
-example_long$Concentration<-as.double(example_long$Concentration)
-
-example_long
-```
-
-
-### Making data 'wider'
-
-Sometimes packages or circumstances will require you reformat your data into a matrix or 'wide' format (notable the `matrixStats` and `matrixTests` packages). You can accomplish this using the `pivot_wider` function, which operates inverse to the `pivot_longer` function described above. For example the input `names_from` is used to specify which variables are to be converted to headers. You can read up on the `pivot_wider` function [here](https://tidyr.tidyverse.org/reference/pivot_wider.html)
-
-### Seperating columns
-
-Sometimes your data has already been recorded in a tidy-ish fashion, but there may be multiple observations recorded under one apparent variable, something like `1 mM` for concentration. As it stands we cannot easily access the numerical value in the concentration recording because R will encode this as a string due to the `mM`. We can **separate** data like this using the `seperate` function, which operates similarly to how `pivot_longer` breaks up headers. 
+Sometimes your data has already been recorded in a tidy-ish fashion, but there may be multiple observations recorded under one apparent variable, something like `1 mM` for concentration. As it stands we cannot easily access the numerical value in the concentration recording because R will encode this as a string due to the `mM`. We can **separate** data like this using the `seperate` function. 
 
 ```{r, echo = FALSE}
 
@@ -178,10 +117,10 @@ sep_example <- data.frame("sample" = c("Toronto_O3_1","Toronto_O3_2", "Toronto_N
                           "reading" = c("10", "22", "30"))
 # Example data frame with multiple encoded observations
 
-sep_example
+DT::datatable(sep_example)
 ```
 
-The example above is something you'll come across in the lab, most often with the sample names you'll pass along to your TA. You've crammed as much information as possible into that name so you and them know exactly what's being analyzed. In this example, the sample name contains the location (`Toronto`), the chemical measured (`O3` or `NO2`) and the replicate number (i.e. `1`). Using the `seperate` function we can split up these three observations so we can properly group our data later on in our analysis.
+The example above is something you'll come across in the lab, most often with the sample names you'll pass along to your TA. You've crammed as much information as possible into that name so you and them know exactly what's being analyzed. In this example, the sample name contains the location (`Toronto`), the chemical measured (`O3` or `NO2`) and the replicate number (i.e. `1`). Using the `separate` function we can split up these three observations so we can properly group our data later on in our analysis.
 
 ```{r}
 # Separating observations
@@ -193,41 +132,102 @@ sep_example <- separate(
     sep = "_",
     remove = TRUE, 
     convert = TRUE)
+```
 
+```{r, echo = FALSE}
 sep_example
 ```
-Again, let's break down what we did with the `separate` function: 
+Let's break down what we just happened: 
 
-1. `col = sample` specifies we're selecting the `sample` column
-2. `into = c(...)` specifies what columns we're separating our name into. 
-3. `sep = "_"1` specifies that each element is separated by an underscore (`_`); you can use `sep = " "` if they were separated by spaces. 
-4. `remove = TRUE` removes the original sample column, no need for duplication; setting this to `FALSE` would keep the original column. 
-5. `convert = TRUE` converts the new columns to the appropriate data format. In the original column ,the replicate number is a character value because it's part of a string, `convert` ensures that it'll be converted to a numerical value. 
+  - `col = sample` specifies we're selecting the `sample` column
+  - `into = c(...)` specifies what columns we're separating our name into. 
+  - `sep = "_"` specifies that each element is separated by an underscore (`_`)
+    - You could use `sep = " "` instead if they were separated by spaces. 
+  - `remove = TRUE` removes the original sample column, no need for duplication; setting this to `FALSE` would keep the original column. 
+  - `convert = TRUE` converts the new columns to the appropriate data format. In the original column ,the replicate number is a character value because it's part of a string, `convert` ensures that it'll be converted to a numerical value. 
 
 Again it's paramount to **be consistent when recording data**.
 
-### Uniting/combining columns 
+
+### Combining columns 
 
 The opposite of the `separate` function is the `unite` function. You'll use it far less often, but you should be aware of it as it may come in handy. You can use it for combining strings together, or prettying up tables for publication/presentations. You can read more about the `unite` function [here](https://tidyr.tidyverse.org/reference/unite.html)
 
-### Renaming columns/headers
 
-Sometimes a name is lengthy, or cumbersome to work with in R. While something like `This_is_a_valid_header` is valid and compatible with R and tidyverse functions, you may want to change it to make it easier to work with (i.e. less typing). Simply use the `rename` helper function:
+## Column Selection Parameters
+
+You can also separate column names into new variables *inside* a call to `pivot_longer()` by using parameters and helper functions to match and separate column names based on specific sequences of characters ("substrings"). Let's look at a different example dataset containing absorbance data.
 
 ```{r, echo = FALSE}
+
+example <- data.frame("wavelength_nm" = c(488, 572) ,
+                      "Chemical_A_0_mM" = c(0,0),
+                      "Chemical_A_1_mM" = c(1,5),
+                      "Chemical_B_0_mM" = c(2,7),
+                      "Chemical_B_1_mM" = c(NA,20)
+                      )
+DT::datatable(example)
+```
+
+```{r}
+
+example_long <- pivot_longer(
+   data = example,
+   cols = starts_with("Chemical"),
+   names_prefix = "Chemical_",
+   names_to = c("Chemical", "Concentration", "Conc_Units"),
+   names_sep = "_",
+   values_to = "Absorbance",
+   values_drop_na = TRUE
+ )
+```
+
+```{r, echo = FALSE}
+example_long
+```
+
+Here we see a few more complex ways to select specific columns and pivot data cleanly:
+
+  - `starts_with("Chemical")` will only select columns for pivoting which have headers starting with the character string "Chemical".
+    - `starts_with()` is a helper function, and can only be used inside other tidyverse functions.
+  - `names_prefix = "Chemical_` will remove the characters "Chemical_" from the start of any selected column headers which contain those characters in that order.
+  - `names_to = c("Chemical", "Concentration", "Conc_Units")` will create 3 new named columns among which to distribute our selected column headers as values. Recall from Chapter 3.6 ([Vectors and Lists]) that the `c()` function (short for "combine") is used to create a vector.
+    - Pivoting to multiple columns like this requires the `names_sep()` argument to also be provided.
+  - `names_sep = "_"` will separate the old column header strings at the `_` character.
+  - `values_drop_na = TRUE` tells `pivot_longer` to not create rows in the new tibble if they would contain an NA value.
+    - Notice how there is no row in the new tibble for Chemical B at concentration 1 mM and wavelength 488 nm.
+
+The `names_prefix`, `names_to`, and `names_sep` arguments above mean that the column header "Chemical_A_0_mM" would first be stripped of the specified prefix resulting in "A_0_mM". Then, this string would be separated at the `_` character and distributed across 3 new columns ("Chemical" = A, "Concentration" = 0, "Conc_Units" = mM).
+
+For more examples on how to use this feature of `pivot_longer()`, check out the [data pivoting reference page](https://tidyr.tidyverse.org/articles/pivot.html#many-variables-in-column-names).
+
+Note how the Concentration column is still in `<chr>` format? This is because R still sees it as being part of a separated string. We'll learn how to fix this by transforming column values in Chapter 10 ([Transforming Your Data]).
+
+
+## Renaming columns
+
+Sometimes a name is lengthy, or cumbersome to work with in R. Even worse, it might contain spaces. While something like `This_is_a_valid_header` might still be valid and compatible with R and tidyverse functions, you may want to change it to make it easier to work with (i.e. less typing). To do this, we can simply use the `rename` helper function in conjunction with `colnames()`:
+
+```{r}
 
 badHeader <- data.frame("UVVis_Wave_Length_nM" = c(500, 501),
                         "Absorbance" = c(1, 0.999))
 colnames(badHeader)
 ```
+`colnames()` will print a character vector with each column name as a separate string. We can use `rename()` inside of `colnames()` to rename any column headers by name. 
 ```{r}
 colnames(rename(badHeader, wavelength_nM = UVVis_Wave_Length_nM))
 ```
-In the `rename` function, the first argument must be the data frame containing the columns you want to rename, followed by the new column name assignments in the format 'new_name = old_name'
+In the `rename` function, the first argument must be the data frame containing the columns you want to rename, followed by the new column name assignments in the format 'new_name = old_name'.
+
+There are other functions which can perform similar operations, but we recommend using `rename()` because it works with the `pipe` operator (see [The pipe: chaining functions together] for more details).
+
+
+## Making data "wider"
+
+Occasionally packages or circumstances will require you to reformat your data into a matrix or 'wide' format. You can accomplish this using the `pivot_wider` function, which operates in a very similar fashion to the `pivot_longer` function described above. Instead of using `names_to` and `values_to`, it relies on the parameters `names_from` and `values_from` to select the columns to be pivoted. We will mostly avoid working with wide data in this book, but if you want to know more, check out the [function reference page](https://tidyr.tidyverse.org/reference/pivot_wider.html). 
 
 
 ## Further reading
 
 As always, the *R for Data Science* book goes into more detail on all of the elements discussed above. For the material covered here you may want to read [Chapter 9: Tidy Data](https://r4ds.had.co.nz/tidy-data.html).
-
-`r if (knitr:::is_html_output()) '## Chapter References'`

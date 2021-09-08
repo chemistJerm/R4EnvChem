@@ -2,13 +2,17 @@
 
 <!-- Aim of this is to show people how they can include programming features to enhance their coding. Mostly tips and shit to get them started, not an all-encompassing guide --> 
 
-Like most things, learning a little goes a long way. And like most things, it's easy to lose the forest for the trees. That's why we won't focus too much on programming (after all you're chemists, not computer scientists) but we will introduce a few simple yet incredibly powerful elements of programming to help you along with your data science quest.
+Like most things, learning a little goes a long way. And like most things, it's easy to lose the forest for the trees. That's why we won't focus too much on programming (after all you're chemists, not computer scientists) but we will introduce a few simple yet incredibly powerful elements of custom function writing to help you along with your data science quest. We'll point to several sources for further reading on functions at the end of this chapter. 
 
-We'll point to several sources for further reading on functions at the end of this chapter. 
+
+
+
 
 ## Functions  
+
+Functions allow you to write general purpose code to automate common tasks. They're a great way to decrease repetition and make your code more legible and reproducible. By using functions you'll reduce the number of lines of code, but you'll also only need to check one spot to rectify any potential issues. 
   
-Functions allow you to write general purpose code to automate common tasks. They're a great way to decrease repetition and make your code more legible and reproducible. To create a function in R you only need `function()`:
+To create a function in R you only need `function()`:
 
 ```{r, error=TRUE}
 funSum <- function(x,y){ #Declare a new function funSum with two arguments: x and y.
@@ -123,11 +127,6 @@ Some ideas to consider when working with `case-when()`:
   - Remember that the point of `case_when()` and piping is legibility. If you're passing multiple conditions, consider writing a function using `else if` statements to keep the pipe legible.  
 
 
-## When to use functions
-
-A good rule when coding is **Don't Repeat yourself!**. In practice, this means don't copy and paste blocks of code to multiple parts of your script. It's more difficult to read (more lines), and if you identify an issue with one block, you'll need to hunt down all the other blocks to rectify the situation (you'll always miss something!). by using functions you'll reduce the number of lines of code, but you'll also only need to check one spot to rectify the issues. 
-
-
 ## Troubleshooting error messages
 
 We briefly mentioned error messages in Chapter 3.1, but once you start writing your own code you will inevitably come across many more. Here we'll go through a few of the more common errors you'll encounter and how to fix your code to resolve the issues.
@@ -208,8 +207,7 @@ class(TRUE)
 ```
 
 
-
-## Further Reading
+## Further reading
 
 These chapter has been intentionally broad, as functional programming in R is somewhat outside the intended scope of this book. We've omitted several other aspects of programming in R such as `for` loops, and other iterative techniques. To get a better sense of what's possible with R programming and to learn more, please refer to the following links:
 

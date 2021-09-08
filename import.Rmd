@@ -1,4 +1,4 @@
-# Importing data into R
+# Importing Your Data Into R
 
 ```{r, echo = FALSE, message = FALSE, error = FALSE, warning = FALSE}
 library(tidyverse)
@@ -7,7 +7,7 @@ library(tidyverse)
 
 Unlike *Excel*, you can't copy and paste your data into R (or RStudio). Instead you need to *import* your data into R so you can work with it. This chapter will discuss how to get your data from a spreadsheet into R (with some accompanying nuances). This was covered briefly in Chapter 3.4, but here we will be describing the general case.
 
-##csv format
+## .csv files
 
 While there are a myriad of ways data is stored, the data you're likely to encounter in an undergraduate lab will be in the form of a `.csv` or *comma-separated values* file. As the name implies, values are separated by commas (go ahead and open any `.csv` file in any text editor to observe this). Essentially you can think of each line as a row and commas as separating values into columns, which is exactly how R and *Excel* handle `.csv` files. 
 
@@ -77,7 +77,7 @@ A benefit of `write_csv` is that it will always save in `UTF-8` encoding and ISO
 
 
 
-## Further Reading
+## Further reading
 
 See Chapters [10](https://r4ds.had.co.nz/tibbles.html) and [11](https://r4ds.had.co.nz/data-import.html) of *R for Data Science* for some more details on `tibbles` and `read_csv`. 
 

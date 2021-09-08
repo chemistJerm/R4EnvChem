@@ -2,14 +2,18 @@
 
 # Intro to Data Analysis
 
-This section will teach you **how** to use R to meet your data analysis needs using a common workflow. If you want to know more about the theory (the **why**) behind these steps, check out Section 3. 
+*Warning! This section assumes you have completed Section 1. It also makes use of data from the [R4EnvChem project template](https://github.com/DavidRossHall/R4EnvChem-ProjectTemplate) for all example code and figures.*
 
-Whether it takes 10 minutes or 10 hrs, *you'll use this workflow for every data analysis project*. By understanding the workflow steps and how to execute them in R, you'll be more than capable of applying the limited tools learned from this book to any data analysis project.
+This section will teach you **how** to use R to meet your data analysis needs using a common workflow, and is designed to be read in sequential order. Whether it takes 10 minutes or 10 hrs, *you'll use this workflow for every data analysis project*. By understanding the workflow steps and how to execute them in R, you'll be more than capable of applying the limited tools learned from this book to any data analysis project. Note that there will be necessarily be some overlap with Section 1 as certain concepts are reintroduced and expanded. 
+
+By the end of this section, you will be able to confidently use R to analyze and plot any of your own data. Afterwards, if you want to know more about the theory (the **why**) behind some of these steps, you can check out any of the individual chapters in Section 3 for a deeper dive. 
+
+
 
 The workflow we'll be using was originally described by Wickham and Grolemund, and consists of six key steps: 
 
 
-![Data science workflow describes by Wickham and Grolemund; image from *R for Data Science*, Wickham and Grolemund (2021)](images/data-science-workflow.png){width=99%}
+![Data science workflow described by Wickham and Grolemund; image from *R for Data Science*, Wickham and Grolemund (2021)](images/data-science-workflow.png){width=99%}
 
 
 - **Import** is the first step and consist of getting your data into R. Seems obvious, but doing it correctly will save you time and headaches down the line. 
@@ -22,11 +26,7 @@ The workflow we'll be using was originally described by Wickham and Grolemund, a
 The *Transform*, *Visualize*, and *Model* cycle exists because these steps often feed into one another. For example, you'll often transform your data, make a quick model, then visualize it to see how it performs. Other times, you'll visualize your data to see what type of model can explain it, and if any transformations are necessary. This is the beauty of R (and coding in general). Once you've set everything up, these steps are fairly simple to execute, allowing you to quickly explore your data from a number of different angles. 
 
 
-## Example Data
-
-Throughout this section and the next we'll be making use of a couple of example datasets. These datasets are all availabe in the `data` subfolder of the *R4EnvChem Project Template*. If you haven't already, you can download them from the repository [here](https://github.com/DavidRossHall/R4EnvChem-ProjectTemplate)
-
-## Further Reading
+## Further reading
 
 In case it hasn't been apparent enough, this entire endeavour was inspired by the *R for Data Science* reference book by Hadley Wickham and Garrett Grolemund. Every step described above is explored in more detail in their book, which can be read freely online at [https://r4ds.had.co.nz/](https://r4ds.had.co.nz/). We strongly encourage you to read through their book to supplement your R data analysis skills. 
 

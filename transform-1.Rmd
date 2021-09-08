@@ -1,4 +1,4 @@
-# Transform: dplyr and data manipulation
+# Transforming Your Data
 
 Transformation encompasses any steps you take to manipulate, reshape, refine, or transform your data. We've already touched upon some useful transformation functions in previous example code snippets, such as the `mutate` function for adding columns. This section will explore some of the most useful functionailities of the `dplyr` package, explicitly introduce the pipe operator `%>%`, and showcase how you can leverage these tools to quickly manipulate your data.
 
@@ -35,7 +35,7 @@ DT::datatable(FAES)
 
 **Note** the use of `convert = TRUE` in the `separate()` call. This runs a type convert on new columns. If we didn't include this, the `conc_Na` column would be of type character because the numbers originated from a string. `convert()` ensures they're converted to numeric. **Always use `convert = TRUE`** when you separate columns. 
 
-## Selecting by row or value
+## Extracting rows by value
 
 `filter()` allows up to subset our data based on observation (row) values. 
 
@@ -92,9 +92,9 @@ filter(FAES, !is.na(signal))
 
 These are just some examples, but you can combine the logical operators in any way that works for you. Likewise, there are multiple combinations that will yield the same result, it's up to you do figure out which works best for you. 
 
-## Arranging rows
+## Reordering rows
 
-`arrange()` simple reorders the rows based on the value you passed to it. By default it arranges the specified values into ascending order. Let's arrange our signal in increasing by increasing order:
+`arrange()` simply reorders the rows of a tibble based on the value you passed to it. By default it arranges the specified values into ascending order. Let's arrange our signal in increasing by increasing order:
 
 ```{r}
 arrange( FAES, signal)
@@ -109,7 +109,7 @@ arrange(FAES, desc(conc_Na), signal)
 
 Just note with `arrange()` that `NA` values will always be placed at the bottom, whether you use `desc()` or not. 
 
-## Selecting by column or variable
+## Extracting columns by name
 
 `select()` allows you to readily select columns by name. Note however that it will always return a tibble, even if you only select one variable/column.
 
@@ -134,9 +134,9 @@ select(FAES, conc_Na:replicate)
 select(FAES, contains("p"))
 ```
 
-##  Adding new variables
+##  Adding and transforming columns
 
-`mutate()` allows you to add new variable (read columns) to your existing data set. It'll probably be the workhorse function you'll use during your data transformation as you can readily pass other functions and mathematical operators to it to transform your data. let's suppose that our standards were diluted by a factor of 10, we can add a new column for this:
+`mutate()` allows you to add new columns (i.e. variables) to your existing data set. It'll probably be the most used function for your data transformation needs as you can readily pass other functions and mathematical operators to it to transform your data. let's suppose that our standards were diluted by a factor of 10, we can add a new column for this:
 
 ```{r}
 mutate(FAES, "dil_fct" = 10)
@@ -155,9 +155,9 @@ Couple of things to note:
   2. the variables we're referencing do not need to be in quotation marks; hence `signal` because this variable already exist. 
   3. Note the order of precedence: `dil_fct` is created first so we can reference in the second argument, we would get an error if we swapped the order. 
   
-### Useful mutate function
+### Useful math functions
 
-There are a myriad of functions you can make use of with the mutate function. Here are some of the mathematical operators available in R: 
+There are a myriad of mathematical functions and operators you can make combine with the mutate function. Here are some of the most common ones you might need: 
 
 ```{r, echo = FALSE}
 
@@ -173,7 +173,7 @@ mutate(FAES_ex, "rounded_signal" = round(signal, digits = 1), "log10_signal" = l
 
 
 
-## Group and summarize data
+## Grouping and summarizing data
 
 `summarize` effectively summarizes your data based on functions you've passed to it (and uses a similar syntax to the `mutate` function to create new columns). Looking at our `FAES` data we'd probably want the mean of the triplicate signals, alongside the standard deviation. Let's see what happens when we apply the summarize function straight up. 
 
@@ -210,9 +210,8 @@ summarize(groupedFAES, "type" = unique(type), "mean" = mean(signal), "stdDev" = 
 ```
 We used the `unique()` function with the `type` column so that the number of rows would be less than or equal to the number of groups. When there is a mismatch in the number of rows across the columns being summarized, then the values in the shorter columns are duplicated within groups until there are an equal number of rows in each column. Try the above code without the `unique` function (`"type" = type`) and you'll see what I mean.
 
-### Useful summarize functions
+We've used the `mean()` and `sd()` functions in these examples, but there are a host of other useful functions you can use in conjunction with summarize. See [Useful math functions] above, or check out *Useful Functions* in the `summarize()` documentation (enter `?summarize` in the console) for more ideas.
 
-We've used the `mean()` and `sd()` functions above, but there are a host of other useful functions you can use in conjunction with summarize. See **Useful Functions** in the `summarize()` documentation (enter `?summarize`) in the console. 
 
 ## The pipe: chaining functions together 
 
